@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krunal Palival | Cybersecurity</title>
+<meta name="description" content="Krunal Palival — Cybersecurity Enthusiast, Ethical Hacker & Security Researcher from Bhavnagar, Gujarat.">
+<meta name="keywords" content="Krunal Palival, Ethical Hacker, Cybersecurity, Penetration Tester, VAPT, Bhavnagar">
+<meta name="author" content="Krunal Palival">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Scan beam -->
+<div class="scan-beam"></div>
+
+<!-- Canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <span class="bracket">[</span>KP<span class="bracket">]</span><span class="blink">_</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="status-dot"></span>
+      <span class="status-txt">AVAILABLE</span>
+    </div>
+    <button class="burger" id="burger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mob-menu" id="mob-menu">
+  <a href="#hero">Home</a>
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag" id="hero-tag">// SYSTEM ONLINE</div>
+    <h1 class="hero-name">
+      <span class="name-line" id="n1">KRUNAL</span>
+      <span class="name-line accent" id="n2">PALIVAL</span>
+    </h1>
+    <div class="hero-role">
+      <span class="prompt">root@kali:~$ </span>
+      <span id="typewriter"></span><span class="cur">|</span>
+    </div>
+    <p class="hero-loc"><span class="red">◉</span> Bhavnagar, Gujarat, India</p>
+    <div class="hero-badges">
+      <span class="badge c">ETHICAL HACKER</span>
+      <span class="badge p">SECURITY RESEARCHER</span>
+      <span class="badge g">CTF PLAYER</span>
+      <span class="badge o">VAPT</span>
+    </div>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-main">HIRE ME <span>→</span></a>
+      <a href="#projects" class="btn-out">PROJECTS</a>
+    </div>
+  </div>
+
+  <!-- Hero Profile Photo -->
+  <div class="hero-right">
+    <div class="hero-photo-wrap">
+      <div class="hex-border">
+        <img src="assets/images/profile.jpg" alt="Krunal Palival" class="hero-photo">
+      </div>
+      <div class="photo-ring r1"></div>
+      <div class="photo-ring r2"></div>
+      <div class="photo-tag">KRUNAL PALIVAL</div>
+      <!-- Floating badges -->
+      <div class="float-badge fb1">⚡ Ethical Hacker</div>
+      <div class="float-badge fb2">🔐 VAPT</div>
+      <div class="float-badge fb3">🛡️ Security</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<section id="about" class="section">
+  <div class="wrapper">
+    <div class="sec-label">// ABOUT.EXE</div>
+    <h2 class="sec-title">About <span class="accent">Me</span></h2>
+
+    <!-- Cross layout: photo left, content right -->
+    <div class="about-row normal">
+      <div class="about-photo-wrap">
+        <div class="photo-frame cyan-frame">
+          <img src="assets/images/photo1.jpg" alt="Krunal" class="about-photo">
+          <div class="frame-corner tl"></div>
+          <div class="frame-corner tr"></div>
+          <div class="frame-corner bl"></div>
+          <div class="frame-corner br"></div>
+        </div>
+        <div class="photo-label">// CASUAL</div>
+      </div>
+      <div class="about-content">
+        <p>I'm <strong>Krunal Palival</strong>, a passionate <strong>Cybersecurity Enthusiast</strong> and <strong>Ethical Hacker</strong> from <strong>Bhavnagar, Gujarat</strong>. Currently pursuing <strong>B.Sc. IT</strong> at Swami Sahajanand College of Computer Science (2024–27).</p>
+        <p>My journey started with curiosity — how systems work, how they break, and how to defend them. I specialize in <strong>Web Application Penetration Testing</strong>, <strong>VAPT</strong>, and <strong>OSINT</strong>.</p>
+        <div class="info-grid">
+          <div class="info-item"><span class="ik">Name</span><span class="iv">Krunal Palival</span></div>
+          <div class="info-item"><span class="ik">College</span><span class="iv">SSCC Bhavnagar</span></div>
+          <div class="info-item"><span class="ik">Degree</span><span class="iv">B.Sc. IT (2024–27)</span></div>
+          <div class="info-item"><span class="ik">Location</span><span class="iv">Bhavnagar, GJ</span></div>
+          <div class="info-item"><span class="ik">Focus</span><span class="iv">Web Pentesting / VAPT</span></div>
+          <div class="info-item"><span class="ik">Status</span><span class="iv green">● Available</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross: content left, photo right -->
+    <div class="about-row reverse">
+      <div class="about-content">
+        <p>I actively participate in <strong>CTF competitions</strong> and practice on platforms like <strong>TryHackMe</strong> and <strong>HackTheBox</strong> to sharpen my offensive and defensive skills.</p>
+        <p>My goal is to become a certified security professional and contribute to building a <strong>safer digital ecosystem</strong>. I believe in responsible disclosure and ethical practices in every engagement.</p>
+        <div class="stat-row">
+          <div class="stat"><div class="sn accent">5+</div><div class="sl">CTFs Played</div></div>
+          <div class="stat"><div class="sn purple">10+</div><div class="sl">Tools Known</div></div>
+          <div class="stat"><div class="sn green">3+</div><div class="sl">Projects</div></div>
+          <div class="stat"><div class="sn orange">1+</div><div class="sl">Years Learning</div></div>
+        </div>
+      </div>
+      <div class="about-photo-wrap">
+        <div class="photo-frame purple-frame">
+          <img src="assets/images/photo2.jpg" alt="Krunal" class="about-photo">
+          <div class="frame-corner tl"></div>
+          <div class="frame-corner tr"></div>
+          <div class="frame-corner bl"></div>
+          <div class="frame-corner br"></div>
+        </div>
+        <div class="photo-label purple">// FORMAL</div>
+      </div>
+    </div>
+
+    <!-- Cross: photo left, content right -->
+    <div class="about-row normal">
+      <div class="about-photo-wrap">
+        <div class="photo-frame green-frame">
+          <img src="assets/images/photo3.jpg" alt="Krunal" class="about-photo">
+          <div class="frame-corner tl"></div>
+          <div class="frame-corner tr"></div>
+          <div class="frame-corner bl"></div>
+          <div class="frame-corner br"></div>
+        </div>
+        <div class="photo-label green">// PROFESSIONAL</div>
+      </div>
+      <div class="about-content">
+        <p>I'm always learning and staying updated with the latest vulnerabilities, CVEs, and security research. From reading security blogs to participating in bug bounty programs — the cybersecurity journey never stops.</p>
+        <div class="terminal-mini">
+          <div class="tm-bar"><span class="td r"></span><span class="td y"></span><span class="td g"></span><span class="tm-title">krunal@kali:~</span></div>
+          <div class="tm-body">
+            <div class="tl"><span class="tp">└─$ </span><span class="tc">cat contact.txt</span></div>
+            <div class="tl to">📧 baraiyakrunal728@gmail.com</div>
+            <div class="tl to">📱 +91 72020 30488</div>
+            <div class="tl to">📍 Bhavnagar, Gujarat, India</div>
+            <div class="tl"><span class="tp">└─$ </span><span class="tc blink-c">█</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SKILLS ══════════════ -->
+<section id="skills" class="section">
+  <div class="wrapper">
+    <div class="sec-label">// SKILL_MATRIX.SH</div>
+    <h2 class="sec-title">Technical <span class="accent">Arsenal</span></h2>
+
+    <!-- Tool Cards — Ayushman style -->
+    <div class="tools-grid">
+
+      <div class="tool-cat">
+        <div class="tool-cat-header cyan-h">
+          <span class="tch-icon">⚔️</span>
+          <span>Offensive Tools</span>
+        </div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Nmap</div>
+            <div class="tool-desc">Network scanning & host discovery</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="90"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Burp Suite</div>
+            <div class="tool-desc">Web app security testing proxy</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="85"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Metasploit</div>
+            <div class="tool-desc">Exploitation framework</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="75"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">SQLMap</div>
+            <div class="tool-desc">Automated SQL injection tool</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="80"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Gobuster</div>
+            <div class="tool-desc">Directory & DNS brute-forcing</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="78"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Nikto</div>
+            <div class="tool-desc">Web server vulnerability scanner</div>
+            <div class="tool-bar-wrap"><div class="tool-bar cyan-bar" data-w="72"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-cat">
+        <div class="tool-cat-header purple-h">
+          <span class="tch-icon">🛡️</span>
+          <span>Defensive & Analysis</span>
+        </div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Wireshark</div>
+            <div class="tool-desc">Network traffic analysis</div>
+            <div class="tool-bar-wrap"><div class="tool-bar purple-bar" data-w="82"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">OWASP ZAP</div>
+            <div class="tool-desc">Automated security scanner</div>
+            <div class="tool-bar-wrap"><div class="tool-bar purple-bar" data-w="76"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Autopsy</div>
+            <div class="tool-desc">Digital forensics platform</div>
+            <div class="tool-bar-wrap"><div class="tool-bar purple-bar" data-w="65"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Volatility</div>
+            <div class="tool-desc">Memory forensics framework</div>
+            <div class="tool-bar-wrap"><div class="tool-bar purple-bar" data-w="60"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-cat">
+        <div class="tool-cat-header green-h">
+          <span class="tch-icon">💻</span>
+          <span>Languages & Scripting</span>
+        </div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Python</div>
+            <div class="tool-desc">Scripting & automation</div>
+            <div class="tool-bar-wrap"><div class="tool-bar green-bar" data-w="80"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Bash / Shell</div>
+            <div class="tool-desc">Linux scripting & automation</div>
+            <div class="tool-bar-wrap"><div class="tool-bar green-bar" data-w="85"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">HTML / CSS / JS</div>
+            <div class="tool-desc">Web fundamentals</div>
+            <div class="tool-bar-wrap"><div class="tool-bar green-bar" data-w="75"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">SQL</div>
+            <div class="tool-desc">Database queries & injection</div>
+            <div class="tool-bar-wrap"><div class="tool-bar green-bar" data-w="70"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-cat">
+        <div class="tool-cat-header orange-h">
+          <span class="tch-icon">🖥️</span>
+          <span>Platforms & OS</span>
+        </div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-name">Kali Linux</div>
+            <div class="tool-desc">Primary pentesting OS</div>
+            <div class="tool-bar-wrap"><div class="tool-bar orange-bar" data-w="92"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">Parrot OS</div>
+            <div class="tool-desc">Security-focused Linux distro</div>
+            <div class="tool-bar-wrap"><div class="tool-bar orange-bar" data-w="80"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">TryHackMe</div>
+            <div class="tool-desc">CTF & learning platform</div>
+            <div class="tool-bar-wrap"><div class="tool-bar orange-bar" data-w="88"></div></div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-name">HackTheBox</div>
+            <div class="tool-desc">Advanced pentesting labs</div>
+            <div class="tool-bar-wrap"><div class="tool-bar orange-bar" data-w="70"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Security Tags Cloud -->
+    <div class="tags-section">
+      <div class="sec-label">// EXPERTISE_TAGS</div>
+      <div class="tags-cloud">
+        <span class="tag c">Web App Pentesting</span>
+        <span class="tag p">VAPT</span>
+        <span class="tag g">OSINT</span>
+        <span class="tag o">Network Scanning</span>
+        <span class="tag c">SQL Injection</span>
+        <span class="tag p">XSS Attacks</span>
+        <span class="tag g">CSRF</span>
+        <span class="tag o">Recon & Enumeration</span>
+        <span class="tag c">Digital Forensics</span>
+        <span class="tag p">Privilege Escalation</span>
+        <span class="tag g">Password Cracking</span>
+        <span class="tag o">CTF Challenges</span>
+        <span class="tag c">Vulnerability Assessment</span>
+        <span class="tag p">Exploit Development</span>
+        <span class="tag g">Bug Bounty</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PROJECTS ══════════════ -->
+<section id="projects" class="section">
+  <div class="wrapper">
+    <div class="sec-label">// PROJECTS.SH</div>
+    <h2 class="sec-title">Security <span class="accent">Projects</span></h2>
+    <div class="projects-grid">
+
+      <div class="proj-card featured-card">
+        <div class="proj-num">01</div>
+        <div class="feat-tag">★ FEATURED</div>
+        <h3 class="proj-title">CyberScope</h3>
+        <div class="proj-tags">
+          <span class="pt c">Python</span><span class="pt c">OSINT</span>
+          <span class="pt c">Recon</span><span class="pt c">CLI Tool</span>
+        </div>
+        <p class="proj-desc">A comprehensive cybersecurity reconnaissance tool built in Python. CyberScope automates information gathering, performs OSINT operations, and generates detailed security reports from a single CLI interface.</p>
+        <div class="proj-links">
+          <a href="https://github.com/mriconic295-gif" target="_blank" class="pl c">[ GitHub → ]</a>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num purple">02</div>
+        <h3 class="proj-title">Web Vulnerability Scanner</h3>
+        <div class="proj-tags">
+          <span class="pt p">Python</span><span class="pt p">Web Security</span><span class="pt p">Automation</span>
+        </div>
+        <p class="proj-desc">Automated scanner detecting OWASP Top 10 vulnerabilities including SQLi, XSS, and CSRF in web applications.</p>
+        <div class="proj-links">
+          <a href="https://github.com/mriconic295-gif" target="_blank" class="pl p">[ GitHub → ]</a>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num green">03</div>
+        <h3 class="proj-title">Network Packet Analyzer</h3>
+        <div class="proj-tags">
+          <span class="pt g">Python</span><span class="pt g">Networking</span><span class="pt g">Wireshark</span>
+        </div>
+        <p class="proj-desc">Real-time network packet capture & analysis tool that identifies suspicious traffic patterns and security anomalies.</p>
+        <div class="proj-links">
+          <a href="https://github.com/mriconic295-gif" target="_blank" class="pl g">[ GitHub → ]</a>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <div class="proj-num orange">04</div>
+        <h3 class="proj-title">CTF Writeups</h3>
+        <div class="proj-tags">
+          <span class="pt o">CTF</span><span class="pt o">TryHackMe</span><span class="pt o">HackTheBox</span>
+        </div>
+        <p class="proj-desc">Detailed writeups for CTF challenges covering forensics, web exploitation, reverse engineering, and privilege escalation.</p>
+        <div class="proj-links">
+          <a href="https://github.com/mriconic295-gif" target="_blank" class="pl o">[ GitHub → ]</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CONTACT ══════════════ -->
+<section id="contact" class="section">
+  <div class="wrapper">
+    <div class="sec-label">// CONTACT.SH</div>
+    <h2 class="sec-title">Get In <span class="accent">Touch</span></h2>
+    <div class="contact-wrap">
+      <div class="contact-left">
+        <p>Open to cybersecurity opportunities, research collaborations, CTF teams, or just talking infosec. Reach out anytime!</p>
+        <div class="clinks">
+          <a href="mailto:baraiyakrunal728@gmail.com" class="clink">
+            <span class="ci c">✉</span>
+            <div><div class="cl-label">Email</div><div class="cl-val">baraiyakrunal728@gmail.com</div></div>
+          </a>
+          <a href="tel:+917202030488" class="clink">
+            <span class="ci p">📱</span>
+            <div><div class="cl-label">Phone</div><div class="cl-val">+91 72020 30488</div></div>
+          </a>
+          <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" class="clink">
+            <span class="ci g">◉</span>
+            <div><div class="cl-label">LinkedIn</div><div class="cl-val">krunal-palival-11bb16326</div></div>
+          </a>
+          <a href="https://github.com/mriconic295-gif" target="_blank" class="clink">
+            <span class="ci o">⌥</span>
+            <div><div class="cl-label">GitHub</div><div class="cl-val">mriconic295-gif</div></div>
+          </a>
+          <a href="https://www.instagram.com/krunal_palival" target="_blank" class="clink">
+            <span class="ci p">◈</span>
+            <div><div class="cl-label">Instagram</div><div class="cl-val">@krunal_palival</div></div>
+          </a>
+        </div>
+      </div>
+      <form class="contact-form" id="cform">
+        <div class="fg">
+          <label class="fl">// NAME</label>
+          <input type="text" class="fi" placeholder="Your Name" required>
+        </div>
+        <div class="fg">
+          <label class="fl">// EMAIL</label>
+          <input type="email" class="fi" placeholder="your@email.com" required>
+        </div>
+        <div class="fg">
+          <label class="fl">// MESSAGE</label>
+          <textarea class="fi fta" placeholder="Your message..." required></textarea>
+        </div>
+        <button type="submit" class="btn-main fsub">TRANSMIT MESSAGE <span>→</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="nav-logo"><span class="bracket">[</span>KP<span class="bracket">]</span></div>
+    <div class="ft">Krunal Palival · Ethical Hacker · Bhavnagar, Gujarat 🇮🇳</div>
+    <div class="fsocs">
+      <a href="https://github.com/mriconic295-gif" target="_blank" class="fs">GitHub</a>
+      <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" class="fs">LinkedIn</a>
+      <a href="https://www.instagram.com/krunal_palival" target="_blank" class="fs">Instagram</a>
+    </div>
+    <div class="fc"><span class="accent">©</span> 2025 Krunal Palival · Built with <span class="accent">❤</span> + <span class="purple">☠</span></div>
+  </div>
+</footer>
+
+<script src="assets/js/script.js"></script>
+</body>
+</html>
