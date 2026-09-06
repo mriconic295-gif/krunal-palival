@@ -1,273 +1,422 @@
-/* ═══════════════════════════════════════
-   KRUNAL PALIVAL — Premium Portfolio JS
-   GSAP + Custom Cursor + Particle Network
-   Mobile: reduced speed particles
-═══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   KRUNAL PALIVAL — Portfolio JavaScript
+   Features: Boot Screen, Exact Particle Network,
+   Custom Cursor, GSAP Animations, Typewriter,
+   Skill Bars, Scroll Reveal, Mobile Menu
+═══════════════════════════════════════════════════ */
 
-// ── Device detection ──
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-// ── GSAP Register ──
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+'use strict';
 
 /* ═══════════════════════════════════════
-   1. PARTICLE NETWORK — PC speed on PC,
-      slower + fewer on mobile
+   BOOT / INITIALIZATION SCREEN
+   (Same feel as Ayushman's site)
 ═══════════════════════════════════════ */
-const canvas = document.getElementById('bg-canvas');
-const ctx    = canvas.getContext('2d');
-let W, H;
+const BOOT_LINES = [
+  '[ OK ] Initializing kernel modules...',
+  '[ OK ] Loading security protocols...',
+  '[ OK ] Mounting encrypted filesystem...',
+  '[ OK ] Starting firewall daemon...',
+  '[ OK ] Establishing secure connection...',
+  '[ OK ] Authenticating user: krunal@root...',
+  '[ OK ] Loading portfolio modules...',
+  '[ ** ] ACCESS GRANTED — Welcome.',
+];
 
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
+function runBoot() {
+  const bootScreen  = document.getElementById('boot-screen');
+  const bootLinesEl = document.getElementById('boot-lines');
+  const bootBar     = document.getElementById('boot-bar');
+  const bootPct     = document.getElementById('boot-pct');
+  const bootStatus  = document.getElementById('boot-status');
 
-const COUNT    = isMobile ? 40 : 90;
-const SPEED    = isMobile ? 0.4 : 1.2;   // mobile much slower
-const DIST     = isMobile ? 120 : 180;
+  if (!bootScreen) return;
 
-class Dot {
-  constructor() { this.reset(); }
-  reset() {
-    this.x  = Math.random() * W;
-    this.y  = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * SPEED;
-    this.vy = (Math.random() - 0.5) * SPEED;
-    this.r  = Math.random() * 1.8 + 0.8;
-    this.a  = Math.random() * 0.5 + 0.25;
+  let lineIdx = 0;
+  const totalLines = BOOT_LINES.length;
+  const lineDelay  = 280;
+
+  function addLine() {
+    if (lineIdx >= totalLines) {
+      bootStatus.textContent = 'LAUNCHING PORTFOLIO...';
+      setTimeout(() => {
+        bootScreen.classList.add('hidden');
+        document.body.style.overflow = '';
+        initAll(); // start everything after boot
+      }, 500);
+      return;
+    }
+    const line = document.createElement('span');
+    line.className = 'bl';
+    line.textContent = BOOT_LINES[lineIdx];
+    // Color last line differently
+    if (lineIdx === totalLines - 1) {
+      line.style.color = '#00f3ff';
+      line.style.fontWeight = 'bold';
+    }
+    bootLinesEl.appendChild(line);
+    // Trigger animation
+    requestAnimationFrame(() => line.style.animationDelay = '0ms');
+    bootLinesEl.scrollTop = bootLinesEl.scrollHeight;
+
+    // Update progress bar
+    const pct = Math.round(((lineIdx + 1) / totalLines) * 100);
+    bootBar.style.width = pct + '%';
+    bootPct.textContent = pct + '%';
+    if (pct < 50) bootStatus.textContent = 'LOADING MODULES...';
+    else if (pct < 80) bootStatus.textContent = 'AUTHENTICATING...';
+    else bootStatus.textContent = 'FINALIZING...';
+
+    lineIdx++;
+    setTimeout(addLine, lineDelay);
   }
-  update() {
-    this.x += this.vx; this.y += this.vy;
-    if (this.x < 0 || this.x > W) this.vx *= -1;
-    if (this.y < 0 || this.y > H) this.vy *= -1;
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0,243,255,${this.a})`;
-    ctx.fill();
-  }
+
+  document.body.style.overflow = 'hidden';
+  setTimeout(addLine, 400);
 }
 
-const dots = Array.from({ length: COUNT }, () => new Dot());
+/* ═══════════════════════════════════════
+   PARTICLE NETWORK — EXACT FROM UPLOADED THEME
+   (+ mouse interaction + mobile optimization)
+═══════════════════════════════════════ */
+function initParticles() {
+  const canvas = document.getElementById('network-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  const isMobile = window.innerWidth < 768 || ('ontouchstart' in window);
+  const COUNT = isMobile ? 45 : 90;
+  const SPEED = isMobile ? 0.5 : 1.5;  // Mobile: slower = PC-like feel
+  const DIST  = isMobile ? 130 : 180;
 
-// Mouse attraction — desktop only
-let mouse = { x: null, y: null };
-if (!isMobile) {
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
-}
+  function resize() {
+    width  = canvas.width  = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-function animate() {
-  ctx.clearRect(0, 0, W, H);
-  dots.forEach(d => {
-    if (!isMobile && mouse.x !== null) {
-      const dx = mouse.x - d.x, dy = mouse.y - d.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < 180) {
-        d.vx += dx * 0.00012; d.vy += dy * 0.00012;
-        const spd = Math.hypot(d.vx, d.vy);
-        if (spd > 2) { d.vx = d.vx / spd * 2; d.vy = d.vy / spd * 2; }
+  // Exact same Particle class as uploaded theme
+  class Particle {
+    constructor() {
+      this.x      = Math.random() * width;
+      this.y      = Math.random() * height;
+      this.vx     = (Math.random() - 0.5) * SPEED;
+      this.vy     = (Math.random() - 0.5) * SPEED;
+      this.radius = Math.random() * 2 + 1;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > width)  this.vx *= -1;
+      if (this.y < 0 || this.y > height) this.vy *= -1;
+      // Speed cap
+      const spd = Math.hypot(this.vx, this.vy);
+      if (spd > SPEED * 1.5) { this.vx = this.vx / spd * SPEED * 1.5; this.vy = this.vy / spd * SPEED * 1.5; }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.6)'; // exact from uploaded theme
+      ctx.fill();
+    }
+  }
+
+  const particles = [];
+  for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+
+  // Mouse attraction (desktop only)
+  let mouse = { x: null, y: null };
+  if (!isMobile) {
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+  }
+
+  // Exact same animate loop as uploaded theme
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+
+    particles.forEach(p => {
+      // Mouse subtle attraction
+      if (mouse.x !== null) {
+        const dx = mouse.x - p.x, dy = mouse.y - p.y;
+        const d  = Math.hypot(dx, dy);
+        if (d < 200) { p.vx += dx * 0.00012; p.vy += dy * 0.00012; }
+      }
+      p.update();
+      p.draw();
+    });
+
+    // Exact same line drawing as uploaded theme
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx   = particles[i].x - particles[j].x;
+        const dy   = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0, 243, 255, ${1 - dist / DIST})`; // exact from uploaded theme
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
       }
     }
-    d.update(); d.draw();
-  });
-  for (let i = 0; i < dots.length; i++) {
-    for (let j = i + 1; j < dots.length; j++) {
-      const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < DIST) {
-        ctx.beginPath();
-        ctx.moveTo(dots[i].x, dots[i].y);
-        ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.strokeStyle = `rgba(0,243,255,${(1 - dist / DIST) * 0.55})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
+    requestAnimationFrame(animate);
   }
-  requestAnimationFrame(animate);
+  animate();
 }
-animate();
 
 /* ═══════════════════════════════════════
-   2. CUSTOM CURSOR — desktop only
+   CUSTOM CURSOR (desktop only)
 ═══════════════════════════════════════ */
-if (!isMobile) {
-  const dot  = document.querySelector('.cursor-dot');
-  const ring = document.querySelector('.cursor-ring');
-  let rx = 0, ry = 0;
+function initCursor() {
+  const outer = document.getElementById('cursorOuter');
+  const inner = document.getElementById('cursorInner');
+  if (!outer || !inner) return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let ox = 0, oy = 0;
+  let tx = 0, ty = 0;
 
   window.addEventListener('mousemove', e => {
-    dot.style.left  = e.clientX + 'px';
-    dot.style.top   = e.clientY + 'px';
-    gsap.to(ring, { left: e.clientX, top: e.clientY, duration: 0.15, ease: 'power2.out' });
+    tx = e.clientX; ty = e.clientY;
+    inner.style.left = tx + 'px';
+    inner.style.top  = ty + 'px';
   });
 
-  document.querySelectorAll('a, button, .badge, .tag, .proj-card, .tool-cat, .photo-frame').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width  = '50px'; ring.style.height = '50px';
-      ring.style.borderColor = 'rgba(0,243,255,0.8)';
-      ring.style.background  = 'rgba(0,243,255,0.05)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width  = '32px'; ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(0,243,255,0.5)';
-      ring.style.background  = 'transparent';
-    });
+  function animateCursor() {
+    ox += (tx - ox) * 0.12;
+    oy += (ty - oy) * 0.12;
+    outer.style.left = ox + 'px';
+    outer.style.top  = oy + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  const hoverEls = document.querySelectorAll('a, button, .badge, .etag, .proj-card, .skill-card, .about-photo-frame, .pg-card');
+  hoverEls.forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
   });
 }
 
 /* ═══════════════════════════════════════
-   3. GSAP HERO ANIMATIONS
+   TYPEWRITER EFFECT
 ═══════════════════════════════════════ */
-gsap.timeline({ defaults: { ease: 'power3.out' } })
-  .from('#hero-tag',  { y: 20, opacity: 0, duration: 0.6 })
-  .from('#n1',        { x: -60, opacity: 0, duration: 0.8 }, '-=0.2')
-  .from('#n2',        { x: -60, opacity: 0, duration: 0.8 }, '-=0.5')
-  .from('.hero-role', { y: 20, opacity: 0, duration: 0.6 }, '-=0.3')
-  .from('.hero-loc',  { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
-  .from('.hero-badges .badge', { y: 20, opacity: 0, stagger: 0.1, duration: 0.5 }, '-=0.3')
-  .from('.hero-btns a', { y: 20, opacity: 0, stagger: 0.15, duration: 0.5 }, '-=0.3')
-  .from('.hero-right', { x: 60, opacity: 0, duration: 1 }, '-=1.2');
+function initTypewriter() {
+  const el = document.getElementById('typewriter');
+  if (!el) return;
 
-/* ═══════════════════════════════════════
-   4. TYPEWRITER
-═══════════════════════════════════════ */
-const roles = ['Cybersecurity Enthusiast','Ethical Hacker','Penetration Tester','Security Researcher','CTF Player','Bug Hunter','VAPT Specialist'];
-const tw = document.getElementById('typewriter');
-let ri = 0, ci = 0, del = false;
+  const roles = [
+    'Ethical Hacker',
+    'Penetration Tester',
+    'Security Researcher',
+    'VAPT Specialist',
+    'CTF Player',
+    'Bug Hunter',
+    'Cybersecurity Enthusiast',
+  ];
 
-function type() {
-  const cur = roles[ri];
-  tw.textContent = del ? cur.substring(0, ci - 1) : cur.substring(0, ci + 1);
-  del ? ci-- : ci++;
-  let spd = del ? 55 : 90;
-  if (!del && ci === cur.length) { spd = 2200; del = true; }
-  else if (del && ci === 0) { del = false; ri = (ri + 1) % roles.length; spd = 400; }
-  setTimeout(type, spd);
+  let ri = 0, ci = 0, deleting = false;
+
+  function type() {
+    const current = roles[ri];
+    el.textContent = deleting
+      ? current.substring(0, ci - 1)
+      : current.substring(0, ci + 1);
+    deleting ? ci-- : ci++;
+
+    let delay = deleting ? 55 : 95;
+    if (!deleting && ci === current.length)    { delay = 2200; deleting = true; }
+    else if (deleting && ci === 0)             { deleting = false; ri = (ri + 1) % roles.length; delay = 400; }
+    setTimeout(type, delay);
+  }
+  type();
 }
-type();
 
 /* ═══════════════════════════════════════
-   5. SCROLL ANIMATIONS — GSAP ScrollTrigger
+   GSAP ANIMATIONS
 ═══════════════════════════════════════ */
-// Section headings
-gsap.utils.toArray('.sec-label, .sec-title').forEach(el => {
-  gsap.from(el, {
-    scrollTrigger: { trigger: el, start: 'top 88%' },
-    y: 30, opacity: 0, duration: 0.7, ease: 'power3.out'
+function initGSAP() {
+  if (typeof gsap === 'undefined') {
+    // GSAP not loaded yet — fallback: just make everything visible
+    document.querySelectorAll('.reveal-section').forEach(s => s.classList.add('revealed'));
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Hero entrance
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  tl.from('.hero-path',    { y: 20, opacity: 0, duration: 0.5 })
+    .from('#heroFirst',    { x: -60, opacity: 0, duration: 0.8 }, '-=0.2')
+    .from('#heroLast',     { x: -60, opacity: 0, duration: 0.8 }, '-=0.5')
+    .from('.hero-role',    { y: 20, opacity: 0, duration: 0.6 }, '-=0.4')
+    .from('.hero-desc',    { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
+    .from('.hero-stats',   { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
+    .from('.hero-badges .badge', { scale: 0.8, opacity: 0, stagger: 0.08, duration: 0.4 }, '-=0.3')
+    .from('.hero-cta a',   { y: 20, opacity: 0, stagger: 0.1, duration: 0.4 }, '-=0.3')
+    .from('#heroPhoto',    { x: 60, opacity: 0, duration: 1 }, '-=1.4');
+
+  // Scroll triggers for sections
+  gsap.utils.toArray('.reveal-section').forEach(section => {
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 80%',
+      onEnter: () => {
+        section.classList.add('revealed');
+        // Animate skill bars when skills section is revealed
+        if (section.id === 'skills') animateBars();
+      }
+    });
   });
-});
 
-// About rows
-gsap.utils.toArray('.about-row').forEach((row, i) => {
-  const photo   = row.querySelector('.about-photo-wrap');
-  const content = row.querySelector('.about-content');
-  const isRev   = row.classList.contains('reverse');
-  if (photo) gsap.from(photo,   { scrollTrigger: { trigger: row, start: 'top 80%' }, x: isRev ? 60 : -60, opacity: 0, duration: 0.9, ease: 'power3.out' });
-  if (content) gsap.from(content, { scrollTrigger: { trigger: row, start: 'top 80%' }, x: isRev ? -60 : 60, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.15 });
-});
+  // Project cards stagger
+  gsap.utils.toArray('.proj-card').forEach((card, i) => {
+    gsap.from(card, {
+      scrollTrigger: { trigger: card, start: 'top 85%' },
+      y: 40, opacity: 0, duration: 0.6, delay: i * 0.1, ease: 'power3.out'
+    });
+  });
 
-// Tool cards stagger
-gsap.from('.tool-cat', {
-  scrollTrigger: { trigger: '.tools-grid', start: 'top 80%' },
-  y: 40, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out'
-});
+  // Tags pop in
+  gsap.from('.etag', {
+    scrollTrigger: { trigger: '.tags-cloud', start: 'top 85%' },
+    scale: 0.8, opacity: 0, stagger: 0.04, duration: 0.4, ease: 'back.out(1.7)'
+  });
 
-// Project cards
-gsap.from('.proj-card', {
-  scrollTrigger: { trigger: '.projects-grid', start: 'top 80%' },
-  y: 40, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out'
-});
-
-// Tags
-gsap.from('.tag', {
-  scrollTrigger: { trigger: '.tags-cloud', start: 'top 85%' },
-  scale: 0.8, opacity: 0, stagger: 0.04, duration: 0.4, ease: 'back.out(1.7)'
-});
-
-// Contact links
-gsap.from('.clink', {
-  scrollTrigger: { trigger: '.clinks', start: 'top 80%' },
-  x: -30, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out'
-});
+  // Contact links slide
+  gsap.from('.clink-item', {
+    scrollTrigger: { trigger: '.clink-list', start: 'top 85%' },
+    x: -30, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out'
+  });
+}
 
 /* ═══════════════════════════════════════
-   6. SKILL BARS — animate on scroll
+   SKILL BARS
 ═══════════════════════════════════════ */
-const barObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.tool-bar').forEach(bar => {
-        bar.style.width = bar.getAttribute('data-w') + '%';
-      });
-      barObs.unobserve(e.target);
+let barsAnimated = false;
+function animateBars() {
+  if (barsAnimated) return;
+  barsAnimated = true;
+  document.querySelectorAll('.si-fill').forEach(bar => {
+    const w = bar.getAttribute('data-width') || '0';
+    setTimeout(() => { bar.style.width = w + '%'; }, 100);
+  });
+}
+
+// Fallback: observe skills section if GSAP fails
+function initBarObserver() {
+  const skillsSec = document.getElementById('skills');
+  if (!skillsSec) return;
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      animateBars();
+      skillsSec.classList.add('revealed');
+      obs.disconnect();
     }
+  }, { threshold: 0.2 });
+  obs.observe(skillsSec);
+}
+
+/* ═══════════════════════════════════════
+   SCROLL REVEAL (Fallback)
+═══════════════════════════════════════ */
+function initScrollReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        if (e.target.id === 'skills') animateBars();
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal-section').forEach(s => obs.observe(s));
+}
+
+/* ═══════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════ */
+function initNavbar() {
+  const navbar   = document.getElementById('navbar');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+    // Active link
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 130) current = s.id;
+    });
+    navLinks.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+}
+
+/* ═══════════════════════════════════════
+   MOBILE MENU
+═══════════════════════════════════════ */
+function initMobileMenu() {
+  const burger  = document.getElementById('hamburger');
+  const overlay = document.getElementById('mobileOverlay');
+  if (!burger || !overlay) return;
+
+  burger.addEventListener('click', () => overlay.classList.toggle('open'));
+  document.querySelectorAll('.mob-link').forEach(l => {
+    l.addEventListener('click', () => overlay.classList.remove('open'));
   });
-}, { threshold: 0.3 });
-document.querySelectorAll('.tool-cat').forEach(el => barObs.observe(el));
-
-/* ═══════════════════════════════════════
-   7. NAVBAR
-═══════════════════════════════════════ */
-const navbar   = document.getElementById('navbar');
-const navLinks = document.querySelectorAll('.nav-links a');
-const sections = document.querySelectorAll('section[id]');
-
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 50);
-  let cur = '';
-  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
-  navLinks.forEach(l => {
-    l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
   });
-});
+}
 
 /* ═══════════════════════════════════════
-   8. MOBILE MENU
+   SMOOTH SCROLL
 ═══════════════════════════════════════ */
-document.getElementById('burger').addEventListener('click', () => {
-  document.getElementById('mob-menu').classList.toggle('open');
-});
-document.querySelectorAll('.mob-menu a').forEach(l => {
-  l.addEventListener('click', () => document.getElementById('mob-menu').classList.remove('open'));
-});
-
-/* ═══════════════════════════════════════
-   9. SMOOTH SCROLL
-═══════════════════════════════════════ */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
-    if (t) { e.preventDefault(); window.scrollTo({ top: t.offsetTop - 64, behavior: 'smooth' }); }
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 64, behavior: 'smooth' });
+      }
+    });
   });
-});
+}
 
 /* ═══════════════════════════════════════
-   10. CONTACT FORM
+   CONTACT FORM
 ═══════════════════════════════════════ */
-const form = document.getElementById('cform');
-if (form) {
+function initContactForm() {
+  const form = document.getElementById('contactForm');
+  const btn  = document.getElementById('cfSubmit');
+  const txt  = document.getElementById('cfBtnText');
+  if (!form || !btn || !txt) return;
+
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const btn = form.querySelector('.fsub');
-    const orig = btn.innerHTML;
-    btn.innerHTML = 'MESSAGE SENT ✓';
-    btn.style.cssText += ';background:rgba(0,255,157,0.1);border-color:var(--g);color:var(--g);';
+    const orig = txt.textContent;
+    txt.textContent = 'MESSAGE SENT ✓';
+    btn.style.cssText = 'background:rgba(0,255,157,0.1);border-color:rgba(0,255,157,0.5);color:#00ff9d;';
     btn.disabled = true;
     setTimeout(() => {
-      btn.innerHTML = orig;
+      txt.textContent = orig;
       btn.style.cssText = '';
       btn.disabled = false;
       form.reset();
-    }, 3000);
+    }, 3500);
   });
 }
 
 /* ═══════════════════════════════════════
-   11. PROJECT CARD TILT — desktop only
+   PROJECT CARD 3D TILT (desktop)
 ═══════════════════════════════════════ */
-if (!isMobile) {
+function initTilt() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
   document.querySelectorAll('.proj-card').forEach(card => {
     card.addEventListener('mousemove', e => {
       const r = card.getBoundingClientRect();
@@ -279,7 +428,77 @@ if (!isMobile) {
   });
 }
 
-/* ── Console Easter Egg ── */
-console.log('%c[KP] KRUNAL PALIVAL — CYBERSECURITY PORTFOLIO', 'background:#020508;color:#00f3ff;font-family:monospace;font-size:14px;padding:8px 20px;border:1px solid #00f3ff;letter-spacing:2px;');
-console.log('%c Ethical Hacker | VAPT | Security Researcher | Bhavnagar, India ', 'background:#020508;color:#bc13fe;font-family:monospace;font-size:11px;padding:4px 20px;');
-console.log('%c👋 Stay ethical. Happy hacking!', 'color:#00ff9d;font-family:monospace;font-size:12px;');
+/* ═══════════════════════════════════════
+   HERO NAME GLITCH ON HOVER
+═══════════════════════════════════════ */
+function initGlitch() {
+  const firstName = document.getElementById('heroFirst');
+  const lastName  = document.getElementById('heroLast');
+  const glitchCSS = `
+    @keyframes glitchAnim {
+      0%  { text-shadow: none; clip-path: none; }
+      20% { text-shadow: -3px 0 #ff003c, 3px 0 #bc13fe; }
+      40% { text-shadow: 3px 0 #00f3ff, -3px 0 #00ff9d; clip-path: inset(10% 0 80% 0); }
+      60% { text-shadow: -3px 0 #bc13fe, 3px 0 #ff003c; }
+      80% { text-shadow: 3px 0 #00ff9d, -3px 0 #00f3ff; clip-path: inset(75% 0 10% 0); }
+      100%{ text-shadow: none; clip-path: none; }
+    }
+  `;
+  const style = document.createElement('style');
+  style.textContent = glitchCSS;
+  document.head.appendChild(style);
+
+  [firstName, lastName].forEach(el => {
+    if (!el) return;
+    el.addEventListener('mouseenter', () => { el.style.animation = 'glitchAnim 0.3s infinite'; });
+    el.addEventListener('mouseleave', () => { el.style.animation = ''; });
+  });
+}
+
+/* ═══════════════════════════════════════
+   INIT ALL — called after boot screen
+═══════════════════════════════════════ */
+function initAll() {
+  initParticles();
+  initCursor();
+  initTypewriter();
+  initNavbar();
+  initMobileMenu();
+  initSmoothScroll();
+  initContactForm();
+  initTilt();
+  initGlitch();
+  initBarObserver();
+  initScrollReveal();
+
+  // Wait for GSAP to be available
+  function tryGSAP() {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      initGSAP();
+    } else {
+      setTimeout(tryGSAP, 100);
+    }
+  }
+  tryGSAP();
+}
+
+/* ═══════════════════════════════════════
+   START
+═══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Start boot immediately
+  runBoot();
+});
+
+/* ═══════════════════════════════════════
+   CONSOLE EASTER EGG
+═══════════════════════════════════════ */
+console.clear();
+console.log(
+  '%c\n ██╗  ██╗██████╗ \n ██║ ██╔╝██╔══██╗\n █████╔╝ ██████╔╝\n ██╔═██╗ ██╔═══╝ \n ██║  ██╗██║     \n ╚═╝  ╚═╝╚═╝     \n',
+  'color:#00f3ff; font-family:monospace; font-size:10px;'
+);
+console.log('%c KRUNAL PALIVAL — ETHICAL HACKER PORTFOLIO ', 'background:#03060a;color:#00f3ff;font-family:monospace;font-size:13px;padding:8px 20px;border:1px solid #00f3ff;letter-spacing:2px;');
+console.log('%c  Ethical Hacker | VAPT | Security Researcher | Bhavnagar, India  ', 'background:#03060a;color:#bc13fe;font-family:monospace;font-size:11px;padding:4px 20px;letter-spacing:1px;');
+console.log('%c\n krunal@root:~$ _\n', 'color:#00ff9d;font-family:monospace;font-size:13px;');
+console.log('%c 👋 Hey Fellow Hacker! Stay Ethical. Happy Hunting! 🎯', 'color:#ff9900;font-family:monospace;font-size:12px;padding:4px 0;');
