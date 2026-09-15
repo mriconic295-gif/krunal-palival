@@ -1,758 +1,1055 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Krunal Palival | Ethical Hacker</title>
 <meta name="description" content="Krunal Palival — Ethical Hacker, Penetration Tester & Security Researcher from Bhavnagar, Gujarat, India.">
-<meta name="keywords" content="Krunal Palival, Ethical Hacker, Cybersecurity, Penetration Tester, VAPT, Bhavnagar Gujarat">
+<meta name="keywords" content="Krunal Palival, Ethical Hacker, Cybersecurity, VAPT, Penetration Testing, Bhavnagar">
 <meta name="author" content="Krunal Palival">
 <meta property="og:title" content="Krunal Palival | Ethical Hacker">
-<meta property="og:description" content="Ethical Hacker & Security Researcher from Bhavnagar, Gujarat">
+<meta property="og:description" content="Ethical Hacker & Security Researcher | Bhavnagar, Gujarat">
 <meta property="og:type" content="website">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- GSAP CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cyber:  '#00f3ff',
+          purple: '#bc13fe',
+          neon:   '#00ff9d',
+          orange: '#ff9900',
+          red:    '#ff003c',
+          dark:   '#03060a',
+          card:   '#0a0f1a',
+        },
+        fontFamily: {
+          mono:  ['Share Tech Mono', 'monospace'],
+          orb:   ['Orbitron', 'sans-serif'],
+          raj:   ['Rajdhani', 'sans-serif'],
+          inter: ['Inter', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
 
-<link rel="stylesheet" href="assets/css/style.css">
+<!-- React + Babel -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+  :root {
+    --cyber:  #00f3ff;
+    --purple: #bc13fe;
+    --neon:   #00ff9d;
+    --orange: #ff9900;
+    --red:    #ff003c;
+    --dark:   #03060a;
+    --card:   rgba(10,15,26,0.85);
+    --border: rgba(0,243,255,0.12);
+    --text:   #c8d8f0;
+    --text2:  #7a90b8;
+    --text3:  #3a5070;
+    --glow-c: 0 0 20px rgba(0,243,255,0.45), 0 0 60px rgba(0,243,255,0.15);
+    --glow-p: 0 0 20px rgba(188,19,254,0.45), 0 0 60px rgba(188,19,254,0.15);
+    --glow-g: 0 0 20px rgba(0,255,157,0.45), 0 0 60px rgba(0,255,157,0.15);
+    --glow-o: 0 0 20px rgba(255,153,0,0.45), 0 0 60px rgba(255,153,0,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--cyber); border-radius: 2px; }
+
+  /* ── CANVAS BG ── */
+  #bg-canvas {
+    position: fixed; inset: 0;
+    width: 100vw; height: 100vh;
+    z-index: -2; pointer-events: none;
+  }
+
+  /* ── CRT SCANLINES ── */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.22) 50%),
+      linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.015), rgba(0,0,255,0.04));
+    background-size: 100% 4px, 3px 100%;
+    z-index: 9999; pointer-events: none; opacity: 0.25;
+  }
+
+  /* ── SCAN BEAM ── */
+  .scan-beam {
+    position: fixed; left: 0; top: 0;
+    width: 100vw; height: 8vh;
+    background: linear-gradient(transparent, rgba(0,243,255,0.06), transparent);
+    z-index: 9998; pointer-events: none;
+    animation: scanMove 10s linear infinite;
+  }
+  @keyframes scanMove { 0%{transform:translateY(-10vh)} 100%{transform:translateY(110vh)} }
+
+  /* ── CURSOR ── */
+  .cur-dot {
+    position: fixed; width: 6px; height: 6px;
+    background: var(--cyber); border-radius: 50%;
+    pointer-events: none; z-index: 99999;
+    transform: translate(-50%,-50%);
+    box-shadow: 0 0 8px var(--cyber);
+    transition: transform 0.05s;
+  }
+  .cur-ring {
+    position: fixed; width: 34px; height: 34px;
+    border: 1.5px solid rgba(0,243,255,0.55);
+    border-radius: 50%; pointer-events: none;
+    z-index: 99998; transform: translate(-50%,-50%);
+    transition: all 0.12s ease;
+  }
+  .cur-ring.hover { width: 50px; height: 50px; background: rgba(0,243,255,0.04); border-color: var(--cyber); }
+
+  /* ── BOOT SCREEN ── */
+  #boot-screen {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.7s ease, visibility 0.7s;
+  }
+  #boot-screen.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+  .boot-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(40px, 8vw, 64px);
+    font-weight: 900;
+    color: var(--cyber);
+    letter-spacing: 8px;
+    text-shadow: var(--glow-c);
+    animation: logoPulse 0.8s ease infinite alternate;
+  }
+  @keyframes logoPulse {
+    from { text-shadow: 0 0 10px rgba(0,243,255,0.4), 0 0 20px rgba(0,243,255,0.1); }
+    to   { text-shadow: 0 0 30px rgba(0,243,255,0.9), 0 0 80px rgba(0,243,255,0.3); }
+  }
+  .boot-log {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--neon);
+    line-height: 2.2;
+    text-align: left;
+    min-height: 130px;
+  }
+  .boot-log span { display: block; opacity: 0; animation: fadeIn 0.15s forwards; }
+  @keyframes fadeIn { to { opacity: 1; } }
+  .boot-track { height: 3px; background: rgba(0,243,255,0.1); border-radius: 2px; overflow: hidden; }
+  .boot-fill  { height: 100%; background: linear-gradient(90deg, var(--neon), var(--cyber)); border-radius: 2px; box-shadow: 0 0 10px var(--cyber); transition: width 0.15s linear; }
+
+  /* ── BLINK ── */
+  @keyframes blink { 50%{opacity:0} }
+  .blink { animation: blink 0.8s step-end infinite; }
+
+  /* ── FLOAT ── */
+  @keyframes floatUp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+
+  /* ── ORBIT ── */
+  @keyframes orbit { to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+  /* ── GLOW CYCLE ── */
+  @keyframes glowCycle {
+    0%,100%{ border-color:rgba(0,243,255,0.5); box-shadow:var(--glow-c); }
+    33%    { border-color:rgba(188,19,254,0.5); box-shadow:var(--glow-p); }
+    66%    { border-color:rgba(0,255,157,0.5);  box-shadow:var(--glow-g); }
+  }
+
+  /* ── PHOTO SCAN ── */
+  @keyframes imgScan { 0%{top:-5%} 100%{top:108%} }
+
+  /* ── PULSE DOT ── */
+  @keyframes pulseDot { 0%,100%{transform:scale(1)} 50%{transform:scale(1.6);opacity:0.6} }
+
+  /* ── SECTION REVEAL ── */
+  .sr { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .sr.in { opacity: 1; transform: none; }
+  .sr-l { opacity: 0; transform: translateX(-36px); transition: opacity 0.75s ease, transform 0.75s ease; }
+  .sr-l.in { opacity: 1; transform: none; }
+  .sr-r { opacity: 0; transform: translateX(36px); transition: opacity 0.75s ease, transform 0.75s ease 0.15s; }
+  .sr-r.in { opacity: 1; transform: none; }
+
+  /* ── SKILL BAR ── */
+  .bar-fill { width: 0%; transition: width 1.6s cubic-bezier(0.25,1,0.5,1); }
+
+  /* ── CARD HOVER SHINE ── */
+  .shine {
+    position: relative; overflow: hidden;
+  }
+  .shine::before {
+    content: '';
+    position: absolute; top: 0; left: -120%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+  }
+  .shine:hover::before { left: 160%; }
+
+  /* ── PHOTO FRAME ── */
+  .photo-frame {
+    border-radius: 12px; overflow: hidden;
+    position: relative; transition: all 0.4s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  }
+  .photo-frame img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; filter:contrast(1.05) saturate(1.1); }
+
+  /* Frame corners */
+  .fc { position:absolute; width:13px; height:13px; border-style:solid; z-index:3; }
+  .fc-tl { top:7px; left:7px; border-width:2px 0 0 2px; }
+  .fc-tr { top:7px; right:7px; border-width:2px 2px 0 0; }
+  .fc-bl { bottom:7px; left:7px; border-width:0 0 2px 2px; }
+  .fc-br { bottom:7px; right:7px; border-width:0 2px 2px 0; }
+  .fc-cyan { border-color:var(--cyber); }
+  .fc-purple { border-color:var(--purple); }
+  .fc-neon { border-color:var(--neon); }
+
+  /* ── NAV GLASS ── */
+  .nav-glass {
+    background: rgba(3,6,10,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,243,255,0.1);
+  }
+  .nav-glass.scrolled { border-bottom-color: rgba(0,243,255,0.25); box-shadow: 0 4px 30px rgba(0,243,255,0.07); }
+
+  /* ── SOCIAL ICON ── */
+  .soc-icon {
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(0,243,255,0.25);
+    border-radius: 6px;
+    color: var(--text2);
+    font-size: 13px;
+    transition: all 0.25s;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+  }
+  .soc-icon:hover { border-color:var(--cyber); color:var(--cyber); background:rgba(0,243,255,0.08); box-shadow:var(--glow-c); transform:translateY(-2px); }
+  .soc-icon.li:hover { border-color:var(--neon); color:var(--neon); background:rgba(0,255,157,0.08); box-shadow:var(--glow-g); }
+  .soc-icon.ig:hover { border-color:var(--purple); color:var(--purple); background:rgba(188,19,254,0.08); box-shadow:var(--glow-p); }
+
+  /* ── BTN ── */
+  .btn-c {
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:3px;
+    padding:12px 24px; border-radius:4px;
+    background:rgba(0,243,255,0.08); border:1px solid var(--cyber);
+    color:var(--cyber); cursor:pointer; transition:all 0.3s;
+  }
+  .btn-c:hover { background:rgba(0,243,255,0.18); box-shadow:var(--glow-c); transform:translateY(-3px); }
+  .btn-p {
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:3px;
+    padding:12px 24px; border-radius:4px;
+    background:rgba(188,19,254,0.08); border:1px solid var(--purple);
+    color:var(--purple); cursor:pointer; transition:all 0.3s;
+  }
+  .btn-p:hover { background:rgba(188,19,254,0.18); box-shadow:var(--glow-p); transform:translateY(-3px); }
+
+  /* ── MINI TERM ── */
+  .mini-term { background:rgba(4,8,16,0.95); border:1px solid rgba(0,243,255,0.15); border-radius:8px; overflow:hidden; }
+  .mt-bar { display:flex; align-items:center; gap:6px; padding:9px 14px; background:rgba(12,20,36,0.9); border-bottom:1px solid rgba(0,243,255,0.08); }
+  .mtd { width:10px;height:10px;border-radius:50%; }
+  .mt-body { padding:14px 18px; font-family:'Share Tech Mono',monospace; font-size:12px; line-height:2.1; }
+  .mt-body .p { color:var(--neon); }
+  .mt-body .c { color:var(--cyber); }
+  .mt-body .o { color:var(--text2); padding-left:4px; }
+  .mt-cur { display:inline-block; background:var(--cyber); width:8px; height:13px; vertical-align:middle; animation:blink 0.8s step-end infinite; }
+
+  /* ── INFO TABLE ── */
+  .info-tbl { border:1px solid rgba(0,243,255,0.1); border-radius:6px; overflow:hidden; background:rgba(10,15,26,0.7); }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:9px 14px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .info-row:last-child { border-bottom:none; }
+  .ik { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; }
+  .iv { font-size:12px; color:var(--text); }
+
+  /* ── QUOTE ── */
+  .quote-wrap { display:flex; gap:12px; align-items:stretch; margin:14px 0; }
+  .q-line { width:3px; background:var(--cyber); border-radius:2px; flex-shrink:0; }
+  .q-text { font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--cyber); font-style:italic; }
+
+  /* ── SKILL CARD ── */
+  .skill-box {
+    background:var(--card); border-radius:10px; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.06);
+    transition:all 0.35s; box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  }
+  .skill-box:hover { transform:translateY(-7px); }
+  .skill-box.sc:hover { border-color:rgba(0,243,255,0.3); box-shadow:var(--glow-c),0 20px 50px rgba(0,0,0,0.5); }
+  .skill-box.sp:hover { border-color:rgba(188,19,254,0.3); box-shadow:var(--glow-p),0 20px 50px rgba(0,0,0,0.5); }
+  .skill-box.sg:hover { border-color:rgba(0,255,157,0.3); box-shadow:var(--glow-g),0 20px 50px rgba(0,0,0,0.5); }
+  .skill-box.so:hover { border-color:rgba(255,153,0,0.3); box-shadow:var(--glow-o),0 20px 50px rgba(0,0,0,0.5); }
+  .skill-head { display:flex; align-items:center; gap:8px; padding:12px 16px; font-family:'Orbitron',sans-serif; font-size:10px; font-weight:600; letter-spacing:2px; }
+  .skill-head.hc { background:rgba(0,243,255,0.07); border-bottom:1px solid rgba(0,243,255,0.15); color:var(--cyber); }
+  .skill-head.hp { background:rgba(188,19,254,0.07); border-bottom:1px solid rgba(188,19,254,0.15); color:var(--purple); }
+  .skill-head.hg { background:rgba(0,255,157,0.07); border-bottom:1px solid rgba(0,255,157,0.15); color:var(--neon); }
+  .skill-head.ho { background:rgba(255,153,0,0.07); border-bottom:1px solid rgba(255,153,0,0.15); color:var(--orange); }
+
+  /* ── PROJECT CARD ── */
+  .proj-box {
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.06);
+    border-top:2px solid var(--cyber);
+    border-radius:8px; padding:22px;
+    display:flex; flex-direction:column; gap:10px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.5);
+    transition:all 0.35s;
+  }
+  .proj-box:hover { transform:translateY(-7px); }
+  .proj-box.pc:hover { border-color:rgba(0,243,255,0.3); box-shadow:var(--glow-c),0 20px 50px rgba(0,0,0,0.5); }
+  .proj-box.pp:hover { border-color:rgba(188,19,254,0.3); box-shadow:var(--glow-p),0 20px 50px rgba(0,0,0,0.5); border-top-color:var(--purple); }
+  .proj-box.pg:hover { border-color:rgba(0,255,157,0.3); box-shadow:var(--glow-g),0 20px 50px rgba(0,0,0,0.5); border-top-color:var(--neon); }
+  .proj-box.po:hover { border-color:rgba(255,153,0,0.3); box-shadow:var(--glow-o),0 20px 50px rgba(0,0,0,0.5); border-top-color:var(--orange); }
+
+  /* ── CONTACT ITEM ── */
+  .c-item {
+    display:flex; align-items:center; gap:14px;
+    padding:13px 16px; border-radius:8px;
+    background:var(--card); border:1px solid rgba(255,255,255,0.06);
+    box-shadow:0 4px 16px rgba(0,0,0,0.4);
+    transition:all 0.3s; cursor:pointer;
+  }
+  .c-item:hover { transform:translateX(8px); border-color:rgba(0,243,255,0.25); background:rgba(0,243,255,0.03); }
+  .c-icon { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:6px; flex-shrink:0; font-size:16px; }
+
+  /* ── TAG ── */
+  .etag { font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:1px; padding:5px 12px; border-radius:4px; transition:all 0.25s; cursor:default; }
+  .tc { background:rgba(0,243,255,0.05); border:1px solid rgba(0,243,255,0.2); color:var(--cyber); }
+  .tp { background:rgba(188,19,254,0.05); border:1px solid rgba(188,19,254,0.2); color:var(--purple); }
+  .tg { background:rgba(0,255,157,0.05); border:1px solid rgba(0,255,157,0.2); color:var(--neon); }
+  .to { background:rgba(255,153,0,0.05); border:1px solid rgba(255,153,0,0.2); color:var(--orange); }
+  .tc:hover { background:rgba(0,243,255,0.12); box-shadow:var(--glow-c); transform:translateY(-2px); }
+  .tp:hover { background:rgba(188,19,254,0.12); box-shadow:var(--glow-p); transform:translateY(-2px); }
+  .tg:hover { background:rgba(0,255,157,0.12); box-shadow:var(--glow-g); transform:translateY(-2px); }
+  .to:hover { background:rgba(255,153,0,0.12); box-shadow:var(--glow-o); transform:translateY(-2px); }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px) {
+    .hide-mob { display:none!important; }
+    body { cursor:auto; }
+    .cur-dot,.cur-ring { display:none; }
+  }
+  @media(max-width:640px) {
+    .hero-pills { display:none; }
+    .orbit-ring { display:none; }
+  }
+</style>
 </head>
+
 <body>
+<div id="root"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="scan-beam"></div>
+<div class="cur-dot" id="curDot"></div>
+<div class="cur-ring" id="curRing"></div>
 
-<!-- ═══════════════════════════════════
-     BOOT / INITIALIZATION SCREEN
-═══════════════════════════════════ -->
 <div id="boot-screen">
-  <div class="boot-inner">
-    <div class="boot-logo">
-      <span class="boot-bracket">[</span>
-      <span class="boot-kp">KP</span>
-      <span class="boot-bracket">]</span>
+  <div style="width:min(480px,90vw);text-align:center">
+    <div class="boot-logo" style="margin-bottom:32px">
+      <span style="color:#3a5070">[</span>KP<span style="color:#3a5070">]</span>
     </div>
-    <div class="boot-lines" id="boot-lines"></div>
-    <div class="boot-bar-wrap">
-      <div class="boot-bar-track">
-        <div class="boot-bar-fill" id="boot-bar"></div>
-      </div>
-      <div class="boot-bar-pct" id="boot-pct">0%</div>
+    <div class="boot-log" id="bootLog" style="margin-bottom:20px;padding:14px;background:rgba(0,255,157,0.03);border:1px solid rgba(0,255,157,0.12);border-radius:4px;min-height:140px"></div>
+    <div class="boot-track" style="margin-bottom:8px">
+      <div class="boot-fill" id="bootFill" style="width:0%"></div>
     </div>
-    <div class="boot-status" id="boot-status">INITIALIZING...</div>
+    <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:11px;color:#3a5070;letter-spacing:2px">
+      <span id="bootStatus">INITIALIZING...</span>
+      <span id="bootPct">0%</span>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════
-     BACKGROUND LAYERS
-═══════════════════════════════════ -->
-<!-- Exact same canvas as uploaded theme -->
-<canvas id="network-canvas"></canvas>
-<!-- CRT scan beam -->
-<div class="scan"></div>
-<!-- CRT scanlines handled by CSS body::after -->
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
 
-<!-- Custom cursor -->
-<div class="cursor-outer" id="cursorOuter"></div>
-<div class="cursor-inner" id="cursorInner"></div>
+/* ═══ DATA ═══ */
+const ROLES = ['Ethical Hacker','Penetration Tester','Security Researcher','VAPT Specialist','CTF Player','Bug Hunter','Cybersecurity Enthusiast'];
 
-<!-- ═══════════════════════════════════
-     NAVBAR
-═══════════════════════════════════ -->
-<nav id="navbar">
-  <div class="nav-container">
-    <a href="#hero" class="nav-logo">
-      <span class="nl-bracket">[</span>
-      <span class="nl-text">KP</span>
-      <span class="nl-bracket">]</span>
-      <span class="nl-blink">_</span>
-    </a>
+const SKILLS = [
+  { color:'c', label:'OFFENSIVE TOOLS', icon:'⚔️', items:[
+    {n:'Nmap',d:'Network scanning & host discovery',p:90},
+    {n:'Burp Suite',d:'Web app security proxy',p:85},
+    {n:'Metasploit',d:'Exploitation framework',p:75},
+    {n:'SQLMap',d:'Automated SQL injection',p:80},
+    {n:'Gobuster',d:'Directory brute-forcing',p:78},
+    {n:'Nikto',d:'Web server scanner',p:72},
+  ]},
+  { color:'p', label:'DEFENSIVE & ANALYSIS', icon:'🛡️', items:[
+    {n:'Wireshark',d:'Network traffic analysis',p:82},
+    {n:'OWASP ZAP',d:'Automated security scanner',p:76},
+    {n:'Autopsy',d:'Digital forensics platform',p:65},
+    {n:'Volatility',d:'Memory forensics framework',p:60},
+    {n:'Snort',d:'Intrusion detection system',p:58},
+  ]},
+  { color:'g', label:'LANGUAGES', icon:'💻', items:[
+    {n:'Python',d:'Security scripting & automation',p:80},
+    {n:'Bash / Shell',d:'Linux scripting',p:85},
+    {n:'HTML / CSS / JS',d:'Web fundamentals',p:75},
+    {n:'SQL',d:'Database & injection',p:70},
+    {n:'C / C++',d:'Low-level programming',p:50},
+  ]},
+  { color:'o', label:'PLATFORMS & OS', icon:'🖥️', items:[
+    {n:'Kali Linux',d:'Primary pentesting OS',p:92},
+    {n:'Parrot OS',d:'Security Linux distro',p:80},
+    {n:'TryHackMe',d:'CTF & learning platform',p:88},
+    {n:'HackTheBox',d:'Advanced pentesting labs',p:70},
+    {n:'Ubuntu / Debian',d:'Server Linux',p:82},
+  ]},
+];
 
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#hero" class="nav-link active">~/home</a></li>
-      <li><a href="#about" class="nav-link">~/about</a></li>
-      <li><a href="#skills" class="nav-link">~/skills</a></li>
-      <li><a href="#projects" class="nav-link">~/projects</a></li>
-      <li><a href="#contact" class="nav-link">~/contact</a></li>
-    </ul>
+const PROJECTS = [
+  { num:'01', color:'c', featured:true, title:'CyberScope', tags:['Python','OSINT','Recon','CLI Tool'], desc:'Comprehensive cybersecurity reconnaissance tool built in Python. Automates information gathering, performs OSINT operations, and generates detailed security reports from a single CLI interface.', link:'https://github.com/mriconic295-gif' },
+  { num:'02', color:'p', title:'Web Vuln Scanner', tags:['Python','Web Security','Automation'], desc:'Automated scanner detecting OWASP Top 10 vulnerabilities — SQLi, XSS, CSRF. Generates comprehensive security reports for target web applications.', link:'https://github.com/mriconic295-gif' },
+  { num:'03', color:'g', title:'Packet Analyzer', tags:['Python','Networking','Wireshark'], desc:'Real-time network packet capture & analysis tool identifying suspicious traffic patterns and security anomalies across live network interfaces.', link:'https://github.com/mriconic295-gif' },
+  { num:'04', color:'o', title:'CTF Writeups', tags:['CTF','TryHackMe','HackTheBox'], desc:'Detailed writeups covering forensics, web exploitation, reverse engineering, binary exploitation, and privilege escalation across multiple platforms.', link:'https://github.com/mriconic295-gif' },
+];
 
-    <div class="nav-right">
-      <div class="nav-status-wrap">
-        <span class="status-dot"></span>
-        <span class="status-text">SYSTEM ONLINE</span>
-      </div>
-    </div>
+const TAGS = [
+  {t:'Web App Pentesting',c:'tc'},{t:'VAPT',c:'tp'},{t:'OSINT',c:'tg'},{t:'Network Scanning',c:'to'},
+  {t:'SQL Injection',c:'tc'},{t:'XSS Attacks',c:'tp'},{t:'CSRF',c:'tg'},{t:'Recon & Enumeration',c:'to'},
+  {t:'Digital Forensics',c:'tc'},{t:'Privilege Escalation',c:'tp'},{t:'Password Cracking',c:'tg'},
+  {t:'CTF Challenges',c:'to'},{t:'Vulnerability Assessment',c:'tc'},{t:'Bug Bounty',c:'tp'},
+  {t:'Exploit Development',c:'tg'},{t:'Wireless Security',c:'to'},
+];
 
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
+/* ═══ COLOR MAPS ═══ */
+const COL = {
+  c:{ text:'text-cyber',  border:'rgba(0,243,255,0.4)',  bg:'rgba(0,243,255,0.07)',   shadow:'--glow-c', hc:'hc', sc:'sc', pc:'pc' },
+  p:{ text:'text-purple', border:'rgba(188,19,254,0.4)', bg:'rgba(188,19,254,0.07)',  shadow:'--glow-p', hc:'hp', sc:'sp', pc:'pp' },
+  g:{ text:'text-neon',   border:'rgba(0,255,157,0.4)',  bg:'rgba(0,255,157,0.07)',   shadow:'--glow-g', hc:'hg', sc:'sg', pc:'pg' },
+  o:{ text:'text-orange', border:'rgba(255,153,0,0.4)',  bg:'rgba(255,153,0,0.07)',   shadow:'--glow-o', hc:'ho', sc:'so', pc:'po' },
+};
 
-<!-- Mobile Menu -->
-<div class="mobile-overlay" id="mobileOverlay">
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#hero" class="mob-link">~/home</a>
-    <a href="#about" class="mob-link">~/about</a>
-    <a href="#skills" class="mob-link">~/skills</a>
-    <a href="#projects" class="mob-link">~/projects</a>
-    <a href="#contact" class="mob-link">~/contact</a>
-  </div>
-</div>
+/* ═══ HOOKS ═══ */
+function useReveal(threshold=0.12) {
+  const ref = useRef();
+  const [vis, setVis] = useState(false);
+  useEffect(()=>{
+    const obs = new IntersectionObserver(([e])=>{ if(e.isIntersecting){ setVis(true); obs.disconnect(); } },{ threshold });
+    if(ref.current) obs.observe(ref.current);
+    return ()=>obs.disconnect();
+  },[]);
+  return [ref, vis];
+}
 
-<!-- ═══════════════════════════════════
-     HERO SECTION
-═══════════════════════════════════ -->
-<section id="hero">
-  <!-- Big ghost text background -->
-  <div class="hero-ghost">HACKER</div>
+function useTypewriter(words) {
+  const [text, setText] = useState('');
+  const [wi, setWi] = useState(0);
+  const [ci, setCi] = useState(0);
+  const [del, setDel] = useState(false);
+  useEffect(()=>{
+    const cur = words[wi];
+    const spd = del ? 55 : 95;
+    const t = setTimeout(()=>{
+      if(!del){ setText(cur.substring(0,ci+1)); if(ci+1===cur.length){ setTimeout(()=>setDel(true),2000); return; } setCi(c=>c+1); }
+      else { setText(cur.substring(0,ci-1)); if(ci-1===0){ setDel(false); setWi(w=>(w+1)%words.length); setCi(0); return; } setCi(c=>c-1); }
+    }, spd);
+    return ()=>clearTimeout(t);
+  },[text,wi,ci,del,words]);
+  return text;
+}
 
-  <div class="hero-container">
-    <!-- LEFT: Content -->
-    <div class="hero-content" id="heroContent">
-      <!-- Terminal path -->
-      <div class="hero-path">
-        <span class="path-user">krunal</span>
-        <span class="path-at">@</span>
-        <span class="path-root">root</span>
-        <span class="path-colon">:</span>
-        <span class="path-tilde">~</span>
-        <span class="path-dollar">$</span>
-      </div>
+/* ═══ PARTICLE NETWORK — EXACT FROM UPLOADED THEME ═══ */
+function initParticles() {
+  const canvas = document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const mob = window.innerWidth < 768;
+  const COUNT = mob ? 45 : 90;
+  const SPEED = mob ? 0.45 : 1.4;
+  const DIST  = mob ? 125 : 180;
+  let W, H;
+  const resize = ()=>{ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; };
+  window.addEventListener('resize', resize); resize();
+  class P {
+    constructor(){ this.x=Math.random()*W; this.y=Math.random()*H; this.vx=(Math.random()-.5)*SPEED; this.vy=(Math.random()-.5)*SPEED; this.r=Math.random()*2+1; }
+    update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>W)this.vx*=-1; if(this.y<0||this.y>H)this.vy*=-1; }
+    draw(){ ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle='rgba(0,243,255,0.65)'; ctx.fill(); }
+  }
+  const pts = Array.from({length:COUNT},()=>new P());
+  let mx=null,my=null;
+  if(!mob){ window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;}); window.addEventListener('mouseleave',()=>{mx=null;my=null;}); }
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      if(mx!==null){ const dx=mx-p.x,dy=my-p.y,d=Math.hypot(dx,dy); if(d<200){p.vx+=dx*.00012;p.vy+=dy*.00012;} }
+      p.update(); p.draw();
+    });
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<DIST){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle=`rgba(0,243,255,${1-d/DIST})`; ctx.lineWidth=0.6; ctx.stroke(); }
+    }
+    requestAnimationFrame(loop);
+  })();
+}
 
-      <h1 class="hero-name">
-        <span class="name-first" id="heroFirst">KRUNAL</span>
-        <span class="name-last" id="heroLast">PALIVAL</span>
-      </h1>
+/* ═══ CURSOR ═══ */
+function initCursor() {
+  const dot=document.getElementById('curDot'); const ring=document.getElementById('curRing');
+  if(!dot||!ring) return;
+  let ox=0,oy=0;
+  window.addEventListener('mousemove',e=>{
+    dot.style.left=e.clientX+'px'; dot.style.top=e.clientY+'px';
+    ox+=(e.clientX-ox)*.13; oy+=(e.clientY-oy)*.13;
+    ring.style.left=ox+'px'; ring.style.top=oy+'px';
+  });
+  document.querySelectorAll('a,button,.skill-box,.proj-box,.c-item,.etag,.photo-frame').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
+  });
+  requestAnimationFrame(function raf(){ ox+=(parseFloat(ring.style.left||0)-ox)*.12; oy+=(parseFloat(ring.style.top||0)-oy)*.12; ring.style.left=ox+'px'; ring.style.top=oy+'px'; requestAnimationFrame(raf); });
+}
 
-      <div class="hero-role">
-        <span class="role-prompt">root@kali:~$&nbsp;</span>
-        <span class="role-typed" id="typewriter"></span><span class="role-cursor">▋</span>
-      </div>
+/* ═══ BOOT ═══ */
+function runBoot(onDone) {
+  const lines=['[ OK ] Initializing kernel modules...','[ OK ] Loading security protocols...','[ OK ] Mounting encrypted filesystem...','[ OK ] Starting firewall daemon...','[ OK ] Establishing secure connection...','[ OK ] Authenticating: krunal@root...','[ OK ] Access granted. Welcome, Krunal.'];
+  const log=document.getElementById('bootLog'); const fill=document.getElementById('bootFill');
+  const pct=document.getElementById('bootPct'); const stat=document.getElementById('bootStatus');
+  if(!log) return;
+  let i=0;
+  const add=()=>{
+    if(i>=lines.length){ stat.textContent='LAUNCHING...'; setTimeout(()=>{ document.getElementById('boot-screen').classList.add('gone'); setTimeout(onDone,700); },400); return; }
+    const s=document.createElement('span'); s.textContent=lines[i];
+    if(i===lines.length-1){s.style.color='#00f3ff';s.style.fontWeight='bold';}
+    log.appendChild(s); log.scrollTop=log.scrollHeight;
+    const p=Math.round(((i+1)/lines.length)*100);
+    fill.style.width=p+'%'; pct.textContent=p+'%';
+    stat.textContent=p<50?'LOADING MODULES...':p<80?'AUTHENTICATING...':'FINALIZING...';
+    i++; setTimeout(add,290);
+  };
+  document.body.style.overflow='hidden'; setTimeout(add,500);
+}
 
-      <p class="hero-desc">
-        Ethical Hacker &amp; Security Researcher based in<br>
-        <span class="accent">Bhavnagar, Gujarat, India 🇮🇳</span>
-      </p>
+/* ═══════════════════════════════════
+   COMPONENTS
+═══════════════════════════════════ */
 
-      <!-- Stats row -->
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-num cyan">5+</span>
-          <span class="stat-label">CTFs</span>
-        </div>
-        <span class="stat-sep"></span>
-        <div class="stat-item">
-          <span class="stat-num purple">10+</span>
-          <span class="stat-label">Tools</span>
-        </div>
-        <span class="stat-sep"></span>
-        <div class="stat-item">
-          <span class="stat-num green">3+</span>
-          <span class="stat-label">Projects</span>
-        </div>
-        <span class="stat-sep"></span>
-        <div class="stat-item">
-          <span class="stat-num orange">1+</span>
-          <span class="stat-label">Years</span>
-        </div>
-      </div>
+/* NAVBAR */
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState('hero');
+  const [menuOpen, setMenuOpen] = useState(false);
 
-      <!-- Badges -->
-      <div class="hero-badges">
-        <span class="badge b-cyan">⚔ ETHICAL HACKER</span>
-        <span class="badge b-purple">🔐 VAPT</span>
-        <span class="badge b-green">🛡 SECURITY RESEARCHER</span>
-        <span class="badge b-orange">🚩 CTF PLAYER</span>
-      </div>
+  useEffect(()=>{
+    const onScroll = ()=>{
+      setScrolled(window.scrollY>50);
+      const secs = ['hero','about','skills','projects','contact'];
+      let cur = 'hero';
+      secs.forEach(id=>{ const el=document.getElementById(id); if(el&&window.scrollY>=el.offsetTop-130) cur=id; });
+      setActive(cur);
+    };
+    window.addEventListener('scroll', onScroll, {passive:true});
+    return ()=>window.removeEventListener('scroll', onScroll);
+  },[]);
 
-      <!-- CTA -->
-      <div class="hero-cta">
-        <a href="#contact" class="btn-primary">
-          <span>HIRE ME</span>
-          <span class="btn-icon">→</span>
-        </a>
-        <a href="#projects" class="btn-secondary">PROJECTS</a>
-        <a href="#skills" class="btn-ghost">SKILLS</a>
-      </div>
-    </div>
+  const navTo = (id)=>{ document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}); setMenuOpen(false); };
 
-    <!-- RIGHT: Profile Photo -->
-    <div class="hero-photo-area" id="heroPhoto">
-      <div class="photo-glow-bg"></div>
-      <div class="photo-main-frame">
-        <!-- Corner brackets -->
-        <span class="pfc tl-c"></span>
-        <span class="pfc tr-c"></span>
-        <span class="pfc bl-c"></span>
-        <span class="pfc br-c"></span>
-        <!-- Scan line on photo -->
-        <div class="photo-scan-line"></div>
-        <!-- Actual photo -->
-        <img src="assets/images/profile.jpg" alt="Krunal Palival" class="hero-photo-img" loading="eager">
-      </div>
-      <!-- Orbit rings -->
-      <div class="orbit-ring or1"></div>
-      <div class="orbit-ring or2"></div>
-      <!-- Floating info pills -->
-      <div class="info-pill ip1">
-        <span class="ip-dot cyan-dot"></span>
-        <span>Ethical Hacker</span>
-      </div>
-      <div class="info-pill ip2">
-        <span class="ip-dot purple-dot"></span>
-        <span>VAPT Expert</span>
-      </div>
-      <div class="info-pill ip3">
-        <span class="ip-dot green-dot"></span>
-        <span>CTF Player</span>
-      </div>
-    </div>
-  </div>
+  const links = [{id:'hero',label:'~/home'},{id:'about',label:'~/about'},{id:'skills',label:'~/skills'},{id:'projects',label:'~/projects'},{id:'contact',label:'~/contact'}];
 
-  <!-- Scroll indicator -->
-  <div class="scroll-indicator">
-    <div class="si-text">SCROLL</div>
-    <div class="si-bar"></div>
-  </div>
-</section>
+  return (
+    <>
+      <nav className={`nav-glass fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled?'scrolled':''}`}>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
+          {/* Logo */}
+          <a href="#" onClick={e=>{e.preventDefault();navTo('hero');}} className="font-orb text-cyber font-black text-base tracking-widest flex-shrink-0" style={{textShadow:'0 0 15px rgba(0,243,255,0.5)'}}>
+            <span style={{color:'#3a5070'}}>[</span>KP<span style={{color:'#3a5070'}}>]</span><span className="blink" style={{color:'#00f3ff'}}>_</span>
+          </a>
 
-<!-- ═══════════════════════════════════
-     ABOUT SECTION
-═══════════════════════════════════ -->
-<section id="about" class="section reveal-section">
-  <div class="section-container">
-    <div class="section-header">
-      <div class="sec-label">// ABOUT.EXE</div>
-      <h2 class="sec-title">Who Am <span class="accent">I</span></h2>
-      <div class="sec-line"></div>
-    </div>
+          {/* Nav links */}
+          <ul className="hidden md:flex gap-1 ml-auto">
+            {links.map(l=>(
+              <li key={l.id}>
+                <button onClick={()=>navTo(l.id)} className={`font-mono text-[11px] tracking-widest px-3 py-1.5 rounded border transition-all duration-200 ${active===l.id?'text-cyber border-cyber/30 bg-cyber/5':' text-[#7a90b8] border-transparent hover:text-cyber hover:border-cyber/20 hover:bg-cyber/3'}`}>
+                  {l.label}
+                </button>
+              </li>
+            ))}
+          </ul>
 
-    <!-- ROW 1: Photo LEFT — Content RIGHT -->
-    <div class="about-row row-normal">
-
-      <div class="about-photo-col" data-reveal="left">
-        <div class="about-photo-frame cyan-frame">
-          <img src="assets/images/photo1.jpg" alt="Krunal Palival" class="about-photo">
-          <span class="afc atl"></span>
-          <span class="afc atr"></span>
-          <span class="afc abl"></span>
-          <span class="afc abr"></span>
-          <div class="photo-bottom-tag cyan-tag">
-            <span class="pbt-dot"></span>
-            <span>KRUNAL PALIVAL</span>
+          {/* Social icons in nav */}
+          <div className="hidden md:flex items-center gap-2 ml-4">
+            <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" className="soc-icon" title="GitHub">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" rel="noopener" className="soc-icon li" title="LinkedIn">
+              <span style={{fontSize:'12px',fontWeight:'800',fontFamily:'sans-serif'}}>in</span>
+            </a>
+            <a href="https://www.instagram.com/krunal_palival" target="_blank" rel="noopener" className="soc-icon ig" title="Instagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
           </div>
-        </div>
-      </div>
 
-      <div class="about-text-col" data-reveal="right">
-        <div class="col-label cyan">// IDENTITY</div>
-        <h3 class="col-title">Cybersecurity <span class="accent">Enthusiast</span></h3>
-        <p class="col-para">I'm <strong>Krunal Palival</strong>, a passionate Ethical Hacker and Security Researcher from <span class="accent">Bhavnagar, Gujarat, India</span>. Currently pursuing <strong>B.Sc. IT</strong> at Swami Sahajanand College of Computer Science (2024–27).</p>
-        <p class="col-para">My journey started with one question — <em>"How do systems break?"</em> That curiosity led me deep into cybersecurity, where I discovered my true calling. I live by the principle:</p>
-        <div class="quote-block">
-          <span class="qb-line"></span>
-          <em>"Know your enemy better than they know themselves."</em>
-        </div>
-        <!-- Info table -->
-        <div class="info-table">
-          <div class="it-row">
-            <span class="it-key">College</span>
-            <span class="it-val">SSCC, Bhavnagar</span>
+          {/* Status */}
+          <div className="hidden md:flex items-center gap-2 ml-2">
+            <span style={{width:7,height:7,background:'var(--neon)',borderRadius:'50%',boxShadow:'0 0 8px var(--neon)',display:'inline-block',animation:'pulseDot 2s infinite'}}></span>
+            <span className="font-mono text-[10px] tracking-widest" style={{color:'var(--neon)'}}>ONLINE</span>
           </div>
-          <div class="it-row">
-            <span class="it-key">Degree</span>
-            <span class="it-val">B.Sc. IT (2024–27)</span>
-          </div>
-          <div class="it-row">
-            <span class="it-key">Focus</span>
-            <span class="it-val">Web Pentesting / VAPT</span>
-          </div>
-          <div class="it-row">
-            <span class="it-key">Status</span>
-            <span class="it-val green-txt">● Available for Opportunities</span>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- ROW 2: Content LEFT — Photo RIGHT -->
-    <div class="about-row row-reverse">
+          {/* Hamburger */}
+          <button className="md:hidden ml-auto p-1 flex flex-col gap-1.5" onClick={()=>setMenuOpen(o=>!o)}>
+            <span style={{width:22,height:2,background:'var(--cyber)',borderRadius:2,display:'block',transition:'all 0.3s',transform:menuOpen?'rotate(45deg) translateY(6px)':'none'}}></span>
+            <span style={{width:22,height:2,background:'var(--cyber)',borderRadius:2,display:'block',opacity:menuOpen?0:1,transition:'opacity 0.2s'}}></span>
+            <span style={{width:22,height:2,background:'var(--cyber)',borderRadius:2,display:'block',transition:'all 0.3s',transform:menuOpen?'rotate(-45deg) translateY(-6px)':'none'}}></span>
+          </button>
+        </div>
+      </nav>
 
-      <div class="about-text-col" data-reveal="left">
-        <div class="col-label purple">// MISSION</div>
-        <h3 class="col-title">Security <span class="purple-txt">Mindset</span></h3>
-        <p class="col-para">I actively participate in <strong>CTF competitions</strong> and train on <span class="accent">TryHackMe</span> and <span class="purple-txt">HackTheBox</span> to sharpen offensive and defensive skills daily.</p>
-        <p class="col-para">My goal is to become a certified security professional — contributing to a <strong>safer digital ecosystem</strong> through responsible disclosure and ethical practices.</p>
-        <!-- Mini terminal -->
-        <div class="mini-terminal">
-          <div class="mt-titlebar">
-            <div class="mt-dots">
-              <span class="mtd red"></span>
-              <span class="mtd yellow"></span>
-              <span class="mtd green"></span>
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 pt-16" style={{background:'rgba(3,6,10,0.97)',backdropFilter:'blur(20px)'}}>
+          <div className="flex flex-col p-6 gap-2">
+            {/* Mobile socials */}
+            <div className="flex gap-3 mb-4">
+              <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" className="soc-icon">GH</a>
+              <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" rel="noopener" className="soc-icon li">in</a>
+              <a href="https://www.instagram.com/krunal_palival" target="_blank" rel="noopener" className="soc-icon ig">IG</a>
             </div>
-            <span class="mt-title">krunal@kali — contact.sh</span>
-          </div>
-          <div class="mt-body">
-            <div class="mt-line"><span class="mt-prompt">┌──(krunal㉿kali)-[~]</span></div>
-            <div class="mt-line"><span class="mt-prompt">└─$ </span><span class="mt-cmd">cat contact.txt</span></div>
-            <div class="mt-line mt-out">📧 baraiyakrunal728@gmail.com</div>
-            <div class="mt-line mt-out">📱 +91 72020 30488</div>
-            <div class="mt-line mt-out">📍 Bhavnagar, Gujarat, India</div>
-            <div class="mt-line"><span class="mt-prompt">└─$ </span><span class="mt-blink">█</span></div>
+            {links.map(l=>(
+              <button key={l.id} onClick={()=>navTo(l.id)} className="font-mono text-sm text-left py-4 border-b tracking-widest" style={{color:'var(--text2)',borderColor:'rgba(0,243,255,0.08)'}}>
+                {l.label}
+              </button>
+            ))}
           </div>
         </div>
+      )}
+    </>
+  );
+}
+
+/* HERO */
+function Hero() {
+  const typed = useTypewriter(ROLES);
+  return (
+    <section id="hero" style={{minHeight:'100vh',display:'flex',flexDirection:'column',position:'relative',overflow:'hidden'}}>
+      {/* Ghost text */}
+      <div style={{position:'absolute',bottom:-20,left:'50%',transform:'translateX(-50%)',fontFamily:'Orbitron,sans-serif',fontSize:'clamp(60px,16vw,200px)',fontWeight:900,letterSpacing:12,color:'transparent',WebkitTextStroke:'1px rgba(0,243,255,0.04)',pointerEvents:'none',userSelect:'none',whiteSpace:'nowrap',zIndex:0}}>HACKER</div>
+
+      <div className="flex-1 flex items-center" style={{maxWidth:1280,margin:'0 auto',padding:'100px 48px 60px',gap:72,flexWrap:'wrap',position:'relative',zIndex:1}}>
+
+        {/* LEFT */}
+        <div style={{flex:1,minWidth:300}}>
+          {/* Terminal path */}
+          <div className="font-mono text-sm mb-4 flex items-center gap-0.5">
+            <span style={{color:'var(--neon)'}}>krunal</span>
+            <span style={{color:'var(--text2)'}}>@</span>
+            <span style={{color:'var(--cyber)',fontWeight:700}}>root</span>
+            <span style={{color:'var(--text2)'}}>:~$</span>
+          </div>
+
+          {/* Name */}
+          <h1 style={{fontFamily:'Orbitron,sans-serif',fontSize:'clamp(40px,6.5vw,86px)',fontWeight:900,lineHeight:0.9,letterSpacing:5,marginBottom:22}}>
+            <span style={{display:'block',color:'#fff'}}>KRUNAL</span>
+            <span style={{display:'block',color:'var(--cyber)',textShadow:'var(--glow-c)'}}>PALIVAL</span>
+          </h1>
+
+          {/* Typewriter */}
+          <div className="font-mono text-sm mb-4" style={{color:'var(--text2)',minHeight:26}}>
+            <span style={{color:'var(--neon)'}}>root@kali:~$ </span>
+            <span style={{color:'var(--cyber)'}}>{typed}</span>
+            <span className="blink" style={{color:'var(--cyber)'}}>▋</span>
+          </div>
+
+          {/* Sub */}
+          <p className="text-sm mb-6" style={{color:'var(--text2)',lineHeight:1.7}}>
+            Ethical Hacker & Security Researcher based in<br/>
+            <span style={{color:'var(--cyber)'}}>Bhavnagar, Gujarat, India 🇮🇳</span>
+          </p>
+
+          {/* Stats */}
+          <div className="flex items-center gap-5 mb-6 flex-wrap">
+            {[{n:'5+',l:'CTFs',col:'var(--cyber)'},{n:'10+',l:'Tools',col:'var(--purple)'},{n:'3+',l:'Projects',col:'var(--neon)'},{n:'1+',l:'Years',col:'var(--orange)'}].map((s,i)=>(
+              <React.Fragment key={i}>
+                {i>0 && <span style={{width:1,height:26,background:'rgba(0,243,255,0.15)',display:'inline-block'}}></span>}
+                <div className="text-center">
+                  <span style={{fontFamily:'Orbitron,sans-serif',fontSize:24,fontWeight:700,color:s.col,display:'block',lineHeight:1}}>{s.n}</span>
+                  <span className="font-mono" style={{fontSize:10,color:'var(--text3)',letterSpacing:1}}>{s.l}</span>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Badges */}
+          <div className="flex flex-wrap gap-2 mb-7">
+            {[{t:'⚔ ETHICAL HACKER',c:'c'},{t:'🔐 VAPT',c:'p'},{t:'🛡 RESEARCHER',c:'g'},{t:'🚩 CTF PLAYER',c:'o'}].map((b,i)=>(
+              <span key={i} className={`etag ${b.c==='c'?'tc':b.c==='p'?'tp':b.c==='g'?'tg':'to'}`}>{b.t}</span>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="flex gap-3 flex-wrap">
+            <a href="#contact" onClick={e=>{e.preventDefault();document.getElementById('contact')?.scrollIntoView({behavior:'smooth'});}} className="btn-c">
+              HIRE ME <span>→</span>
+            </a>
+            <a href="#projects" onClick={e=>{e.preventDefault();document.getElementById('projects')?.scrollIntoView({behavior:'smooth'});}} className="btn-p">
+              PROJECTS
+            </a>
+          </div>
+        </div>
+
+        {/* RIGHT: Photo */}
+        <div style={{flexShrink:0,display:'flex',justifyContent:'center',alignItems:'center',position:'relative',width:280}}>
+          <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',width:340,height:380,background:'radial-gradient(ellipse,rgba(0,243,255,0.07),transparent 70%)',pointerEvents:'none',animation:'glowCycle 5s ease-in-out infinite'}}></div>
+          <div style={{position:'relative',width:240,height:300,borderRadius:12,overflow:'hidden',border:'1.5px solid rgba(0,243,255,0.5)',animation:'glowCycle 5s ease-in-out infinite',zIndex:2}}>
+            <span className="fc fc-tl fc-cyan"></span><span className="fc fc-tr fc-cyan"></span>
+            <span className="fc fc-bl fc-cyan"></span><span className="fc fc-br fc-cyan"></span>
+            <div style={{position:'absolute',left:0,width:'100%',height:3,background:'linear-gradient(transparent,rgba(0,243,255,0.7),transparent)',zIndex:3,animation:'imgScan 2.5s linear infinite'}}></div>
+            <img src="public/images/profile.jpg" alt="Krunal Palival" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',filter:'contrast(1.05) saturate(1.1)'}}/>
+          </div>
+          {/* Orbit rings */}
+          <div className="orbit-ring" style={{position:'absolute',width:310,height:310,border:'1px solid rgba(0,243,255,0.1)',borderRadius:'50%',top:'50%',left:'50%',transform:'translate(-50%,-50%)',animation:'orbit 20s linear infinite'}}></div>
+          <div className="orbit-ring" style={{position:'absolute',width:380,height:380,border:'1px solid rgba(188,19,254,0.07)',borderRadius:'50%',top:'50%',left:'50%',transform:'translate(-50%,-50%)',animation:'orbit 30s linear infinite reverse'}}></div>
+          {/* Pills */}
+          <div className="hero-pills" style={{position:'absolute',top:10,right:-85,fontFamily:'Share Tech Mono,monospace',fontSize:10,letterSpacing:1,padding:'5px 12px',borderRadius:20,background:'rgba(0,243,255,0.07)',border:'1px solid rgba(0,243,255,0.25)',color:'var(--cyber)',display:'flex',alignItems:'center',gap:6,animation:'floatUp 3s ease-in-out infinite',zIndex:4}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'var(--cyber)',boxShadow:'0 0 6px var(--cyber)',flexShrink:0}}></span>Ethical Hacker
+          </div>
+          <div className="hero-pills" style={{position:'absolute',top:'45%',right:-78,fontFamily:'Share Tech Mono,monospace',fontSize:10,letterSpacing:1,padding:'5px 12px',borderRadius:20,background:'rgba(188,19,254,0.07)',border:'1px solid rgba(188,19,254,0.25)',color:'var(--purple)',display:'flex',alignItems:'center',gap:6,animation:'floatUp 3.5s ease-in-out infinite 0.8s',zIndex:4}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'var(--purple)',boxShadow:'0 0 6px var(--purple)',flexShrink:0}}></span>VAPT Expert
+          </div>
+          <div className="hero-pills" style={{position:'absolute',bottom:50,right:-70,fontFamily:'Share Tech Mono,monospace',fontSize:10,letterSpacing:1,padding:'5px 12px',borderRadius:20,background:'rgba(0,255,157,0.07)',border:'1px solid rgba(0,255,157,0.25)',color:'var(--neon)',display:'flex',alignItems:'center',gap:6,animation:'floatUp 4s ease-in-out infinite 1.5s',zIndex:4}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'var(--neon)',boxShadow:'0 0 6px var(--neon)',flexShrink:0}}></span>CTF Player
+          </div>
+        </div>
+
       </div>
 
-      <div class="about-photo-col" data-reveal="right">
-        <div class="about-photo-frame purple-frame">
-          <img src="assets/images/photo2.jpg" alt="Krunal Palival" class="about-photo">
-          <span class="afc atl"></span>
-          <span class="afc atr"></span>
-          <span class="afc abl"></span>
-          <span class="afc abr"></span>
-          <div class="photo-bottom-tag purple-tag">
-            <span class="pbt-dot"></span>
-            <span>SECURITY RESEARCHER</span>
-          </div>
-        </div>
+      {/* Scroll hint */}
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,paddingBottom:24,zIndex:1}}>
+        <span className="font-mono" style={{fontSize:10,color:'var(--text3)',letterSpacing:3}}>SCROLL</span>
+        <span style={{width:1,height:32,background:'linear-gradient(var(--cyber),transparent)',animation:'barPulse 1.5s ease-in-out infinite'}}></span>
       </div>
-    </div>
+      <style>{`@keyframes barPulse{0%,100%{opacity:1;height:32px}50%{opacity:0.3;height:18px}}`}</style>
+    </section>
+  );
+}
 
-    <!-- ROW 3: Photo LEFT — Content RIGHT -->
-    <div class="about-row row-normal">
-
-      <div class="about-photo-col" data-reveal="left">
-        <div class="about-photo-frame green-frame">
-          <img src="assets/images/photo3.jpg" alt="Krunal Palival" class="about-photo">
-          <span class="afc atl"></span>
-          <span class="afc atr"></span>
-          <span class="afc abl"></span>
-          <span class="afc abr"></span>
-          <div class="photo-bottom-tag green-tag">
-            <span class="pbt-dot"></span>
-            <span>ETHICAL HACKER</span>
-          </div>
+/* ABOUT ROW */
+function AboutRow({img,side,label,labelColor,title,titleAccent,titleAccentColor,children,frameColor}) {
+  const [ref,vis] = useReveal();
+  const imgEl = (
+    <div className={`sr-l ${vis?'in':''} flex justify-center`} style={{transitionDelay: side==='right'?'0.15s':'0s'}}>
+      <div className="photo-frame" style={{width:240,height:290,border:`2px solid ${frameColor}`,boxShadow:`0 0 20px ${frameColor}55, 0 10px 40px rgba(0,0,0,0.6)`}}>
+        <span className="fc fc-tl" style={{borderColor:frameColor}}></span>
+        <span className="fc fc-tr" style={{borderColor:frameColor}}></span>
+        <span className="fc fc-bl" style={{borderColor:frameColor}}></span>
+        <span className="fc fc-br" style={{borderColor:frameColor}}></span>
+        <img src={img} alt="Krunal Palival"/>
+        <div style={{position:'absolute',bottom:0,left:0,right:0,padding:'8px 12px',background:'linear-gradient(transparent,rgba(3,6,10,0.95))',fontFamily:'Share Tech Mono,monospace',fontSize:9,letterSpacing:3,color:frameColor,display:'flex',alignItems:'center',gap:8}}>
+          <span style={{width:5,height:5,borderRadius:'50%',background:frameColor,boxShadow:`0 0 6px ${frameColor}`,flexShrink:0}}></span>
+          {titleAccent.toUpperCase()}
         </div>
-      </div>
-
-      <div class="about-text-col" data-reveal="right">
-        <div class="col-label green">// PHILOSOPHY</div>
-        <h3 class="col-title">Always <span class="green-txt">Learning</span></h3>
-        <p class="col-para">Cybersecurity is not a destination — it's a <strong>continuous journey</strong>. I stay updated with the latest CVEs, zero-days, and security research. Every system has a vulnerability; my job is to find it <em>before the bad guys do.</em></p>
-        <div class="philosophy-grid">
-          <div class="pg-card cyan-card">
-            <div class="pgc-icon">⚔️</div>
-            <div class="pgc-title">Offensive</div>
-            <div class="pgc-sub">Think Like Attacker</div>
-          </div>
-          <div class="pg-card purple-card">
-            <div class="pgc-icon">🛡️</div>
-            <div class="pgc-title">Defensive</div>
-            <div class="pgc-sub">Secure the System</div>
-          </div>
-          <div class="pg-card green-card">
-            <div class="pgc-icon">🔍</div>
-            <div class="pgc-title">OSINT</div>
-            <div class="pgc-sub">Gather Intel</div>
-          </div>
-          <div class="pg-card orange-card">
-            <div class="pgc-icon">🚩</div>
-            <div class="pgc-title">CTF</div>
-            <div class="pgc-sub">Solve & Conquer</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════
-     SKILLS SECTION
-═══════════════════════════════════ -->
-<section id="skills" class="section reveal-section">
-  <div class="section-container">
-    <div class="section-header">
-      <div class="sec-label">// SKILL_MATRIX.SH</div>
-      <h2 class="sec-title">Technical <span class="accent">Arsenal</span></h2>
-      <div class="sec-line"></div>
-    </div>
-
-    <!-- Tool Cards with shadow boxes -->
-    <div class="skills-grid">
-
-      <!-- Offensive -->
-      <div class="skill-card shadow-cyan" data-reveal="up">
-        <div class="skill-card-header sh-cyan">
-          <span class="sch-icon">⚔️</span>
-          <span class="sch-title">OFFENSIVE TOOLS</span>
-        </div>
-        <div class="skill-items">
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Nmap</span><span class="si-pct cyan">90%</span></div>
-            <div class="si-desc">Network scanning &amp; host discovery</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="90"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Burp Suite</span><span class="si-pct cyan">85%</span></div>
-            <div class="si-desc">Web app security testing proxy</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="85"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Metasploit</span><span class="si-pct cyan">75%</span></div>
-            <div class="si-desc">Advanced exploitation framework</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="75"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">SQLMap</span><span class="si-pct cyan">80%</span></div>
-            <div class="si-desc">Automated SQL injection tool</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="80"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Gobuster</span><span class="si-pct cyan">78%</span></div>
-            <div class="si-desc">Directory &amp; DNS brute-forcing</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="78"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Nikto</span><span class="si-pct cyan">72%</span></div>
-            <div class="si-desc">Web server vulnerability scanner</div>
-            <div class="si-track"><div class="si-fill cyan-fill" data-width="72"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Defensive -->
-      <div class="skill-card shadow-purple" data-reveal="up">
-        <div class="skill-card-header sh-purple">
-          <span class="sch-icon">🛡️</span>
-          <span class="sch-title">DEFENSIVE &amp; ANALYSIS</span>
-        </div>
-        <div class="skill-items">
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Wireshark</span><span class="si-pct purple">82%</span></div>
-            <div class="si-desc">Network traffic analysis</div>
-            <div class="si-track"><div class="si-fill purple-fill" data-width="82"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">OWASP ZAP</span><span class="si-pct purple">76%</span></div>
-            <div class="si-desc">Automated security scanner</div>
-            <div class="si-track"><div class="si-fill purple-fill" data-width="76"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Autopsy</span><span class="si-pct purple">65%</span></div>
-            <div class="si-desc">Digital forensics platform</div>
-            <div class="si-track"><div class="si-fill purple-fill" data-width="65"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Volatility</span><span class="si-pct purple">60%</span></div>
-            <div class="si-desc">Memory forensics framework</div>
-            <div class="si-track"><div class="si-fill purple-fill" data-width="60"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Snort / Suricata</span><span class="si-pct purple">58%</span></div>
-            <div class="si-desc">Intrusion detection system</div>
-            <div class="si-track"><div class="si-fill purple-fill" data-width="58"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Languages -->
-      <div class="skill-card shadow-green" data-reveal="up">
-        <div class="skill-card-header sh-green">
-          <span class="sch-icon">💻</span>
-          <span class="sch-title">LANGUAGES &amp; SCRIPTING</span>
-        </div>
-        <div class="skill-items">
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Python</span><span class="si-pct green">80%</span></div>
-            <div class="si-desc">Security scripting &amp; automation</div>
-            <div class="si-track"><div class="si-fill green-fill" data-width="80"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Bash / Shell</span><span class="si-pct green">85%</span></div>
-            <div class="si-desc">Linux scripting &amp; automation</div>
-            <div class="si-track"><div class="si-fill green-fill" data-width="85"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">HTML / CSS / JS</span><span class="si-pct green">75%</span></div>
-            <div class="si-desc">Web fundamentals &amp; exploitation</div>
-            <div class="si-track"><div class="si-fill green-fill" data-width="75"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">SQL</span><span class="si-pct green">70%</span></div>
-            <div class="si-desc">Database queries &amp; injection</div>
-            <div class="si-track"><div class="si-fill green-fill" data-width="70"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">C / C++</span><span class="si-pct green">50%</span></div>
-            <div class="si-desc">Low-level programming basics</div>
-            <div class="si-track"><div class="si-fill green-fill" data-width="50"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Platforms -->
-      <div class="skill-card shadow-orange" data-reveal="up">
-        <div class="skill-card-header sh-orange">
-          <span class="sch-icon">🖥️</span>
-          <span class="sch-title">PLATFORMS &amp; OS</span>
-        </div>
-        <div class="skill-items">
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Kali Linux</span><span class="si-pct orange">92%</span></div>
-            <div class="si-desc">Primary pentesting OS</div>
-            <div class="si-track"><div class="si-fill orange-fill" data-width="92"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Parrot OS</span><span class="si-pct orange">80%</span></div>
-            <div class="si-desc">Security-focused Linux distro</div>
-            <div class="si-track"><div class="si-fill orange-fill" data-width="80"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">TryHackMe</span><span class="si-pct orange">88%</span></div>
-            <div class="si-desc">CTF &amp; learning platform</div>
-            <div class="si-track"><div class="si-fill orange-fill" data-width="88"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">HackTheBox</span><span class="si-pct orange">70%</span></div>
-            <div class="si-desc">Advanced pentesting labs</div>
-            <div class="si-track"><div class="si-fill orange-fill" data-width="70"></div></div>
-          </div>
-          <div class="skill-item">
-            <div class="si-top"><span class="si-name">Ubuntu / Debian</span><span class="si-pct orange">82%</span></div>
-            <div class="si-desc">Server &amp; workstation Linux</div>
-            <div class="si-track"><div class="si-fill orange-fill" data-width="82"></div></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Expertise Tags Cloud -->
-    <div class="tags-section" data-reveal="up">
-      <div class="sec-label" style="margin-bottom:16px">// EXPERTISE_TAGS</div>
-      <div class="tags-cloud">
-        <span class="etag et-c">Web App Pentesting</span>
-        <span class="etag et-p">VAPT</span>
-        <span class="etag et-g">OSINT</span>
-        <span class="etag et-o">Network Scanning</span>
-        <span class="etag et-c">SQL Injection</span>
-        <span class="etag et-p">XSS Attacks</span>
-        <span class="etag et-g">CSRF</span>
-        <span class="etag et-o">Recon &amp; Enumeration</span>
-        <span class="etag et-c">Digital Forensics</span>
-        <span class="etag et-p">Privilege Escalation</span>
-        <span class="etag et-g">Password Cracking</span>
-        <span class="etag et-o">CTF Challenges</span>
-        <span class="etag et-c">Vulnerability Assessment</span>
-        <span class="etag et-p">Bug Bounty</span>
-        <span class="etag et-g">Exploit Development</span>
-        <span class="etag et-o">Wireless Security</span>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════
-     PROJECTS SECTION
-═══════════════════════════════════ -->
-<section id="projects" class="section reveal-section">
-  <div class="section-container">
-    <div class="section-header">
-      <div class="sec-label">// PROJECTS.SH</div>
-      <h2 class="sec-title">Security <span class="accent">Projects</span></h2>
-      <div class="sec-line"></div>
+  );
+  const txtEl = (
+    <div className={`sr-r ${vis?'in':''}`}>
+      <div className="font-mono text-[11px] tracking-widest mb-3" style={{color:frameColor}}>{label}</div>
+      <h3 style={{fontFamily:'Rajdhani,sans-serif',fontSize:'clamp(22px,3vw,28px)',fontWeight:700,color:'#fff',letterSpacing:1,marginBottom:16}}>
+        {title} <span style={{color:frameColor}}>{titleAccent}</span>
+      </h3>
+      {children}
     </div>
-
-    <div class="projects-grid">
-
-      <!-- Featured -->
-      <div class="proj-card proj-featured shadow-cyan" data-reveal="up">
-        <div class="proj-num">01</div>
-        <div class="proj-feat-tag">★ FEATURED</div>
-        <h3 class="proj-title">CyberScope</h3>
-        <div class="proj-tags">
-          <span class="ptag pt-c">Python</span>
-          <span class="ptag pt-c">OSINT</span>
-          <span class="ptag pt-c">Recon</span>
-          <span class="ptag pt-c">CLI Tool</span>
-        </div>
-        <p class="proj-desc">A comprehensive cybersecurity reconnaissance tool built in Python. CyberScope automates information gathering, performs OSINT operations, and generates detailed security reports — all from a single command-line interface. Built for penetration testers and security researchers.</p>
-        <div class="proj-links">
-          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="plink pl-c">
-            <span class="plink-icon">⌥</span> GitHub →
-          </a>
-          <!-- <a href="#" class="plink pl-demo">Live Demo →</a> -->
-        </div>
-      </div>
-
-      <div class="proj-card shadow-purple" data-reveal="up">
-        <div class="proj-num purple-txt">02</div>
-        <h3 class="proj-title">Web Vuln Scanner</h3>
-        <div class="proj-tags">
-          <span class="ptag pt-p">Python</span>
-          <span class="ptag pt-p">Web Security</span>
-          <span class="ptag pt-p">Automation</span>
-        </div>
-        <p class="proj-desc">Automated web vulnerability scanner detecting OWASP Top 10 — SQLi, XSS, CSRF, and more. Generates comprehensive security reports for target web applications.</p>
-        <div class="proj-links">
-          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="plink pl-p">
-            <span class="plink-icon">⌥</span> GitHub →
-          </a>
-        </div>
-      </div>
-
-      <div class="proj-card shadow-green" data-reveal="up">
-        <div class="proj-num green-txt">03</div>
-        <h3 class="proj-title">Packet Analyzer</h3>
-        <div class="proj-tags">
-          <span class="ptag pt-g">Python</span>
-          <span class="ptag pt-g">Networking</span>
-          <span class="ptag pt-g">Wireshark</span>
-        </div>
-        <p class="proj-desc">Real-time network packet capture and analysis tool that identifies suspicious traffic patterns and security anomalies across live network interfaces.</p>
-        <div class="proj-links">
-          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="plink pl-g">
-            <span class="plink-icon">⌥</span> GitHub →
-          </a>
-        </div>
-      </div>
-
-      <div class="proj-card shadow-orange" data-reveal="up">
-        <div class="proj-num orange-txt">04</div>
-        <h3 class="proj-title">CTF Writeups</h3>
-        <div class="proj-tags">
-          <span class="ptag pt-o">CTF</span>
-          <span class="ptag pt-o">TryHackMe</span>
-          <span class="ptag pt-o">HackTheBox</span>
-        </div>
-        <p class="proj-desc">Detailed writeups and solutions for CTF challenges covering forensics, web exploitation, reverse engineering, binary exploitation, and privilege escalation.</p>
-        <div class="proj-links">
-          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="plink pl-o">
-            <span class="plink-icon">⌥</span> GitHub →
-          </a>
-        </div>
-      </div>
-
+  );
+  return (
+    <div ref={ref} style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:64,alignItems:'center',marginBottom:80}}>
+      {side==='left' ? <>{imgEl}{txtEl}</> : <>{txtEl}{imgEl}</>}
     </div>
-  </div>
-</section>
+  );
+}
 
-<!-- ═══════════════════════════════════
-     CONTACT SECTION
-═══════════════════════════════════ -->
-<section id="contact" class="section reveal-section">
-  <div class="section-container">
-    <div class="section-header">
-      <div class="sec-label">// CONTACT.SH</div>
-      <h2 class="sec-title">Get In <span class="accent">Touch</span></h2>
-      <div class="sec-line"></div>
-    </div>
+function About() {
+  return (
+    <section id="about" className="section" style={{padding:'80px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+      <div style={{maxWidth:1100,margin:'0 auto',padding:'0 32px'}}>
+        <div style={{marginBottom:52}}>
+          <div className="font-mono text-[11px] tracking-widest mb-3" style={{color:'var(--cyber)'}}>// ABOUT.EXE</div>
+          <h2 style={{fontFamily:'Orbitron,sans-serif',fontSize:'clamp(24px,4vw,38px)',fontWeight:700,color:'#fff',letterSpacing:3}}>Who Am <span style={{color:'var(--cyber)'}}>I</span></h2>
+          <div style={{width:50,height:2,background:'linear-gradient(90deg,var(--cyber),transparent)',marginTop:12}}></div>
+        </div>
 
-    <div class="contact-wrap">
-      <div class="contact-info" data-reveal="left">
-        <p class="contact-intro">Open to cybersecurity opportunities, research collaborations, CTF teams, or just talking infosec. I respond fast — reach out through any channel below.</p>
+        {/* ROW 1 */}
+        <AboutRow img="public/images/photo1.jpg" side="left" label="// IDENTITY" labelColor="var(--cyber)" title="Cybersecurity" titleAccent="Enthusiast" titleAccentColor="var(--cyber)" frameColor="var(--cyber)">
+          <p className="text-sm mb-3" style={{color:'var(--text2)',lineHeight:1.75}}>I'm <strong style={{color:'#fff'}}>Krunal Palival</strong>, a passionate Ethical Hacker and Security Researcher from <span style={{color:'var(--cyber)'}}>Bhavnagar, Gujarat, India</span>. Currently pursuing <strong style={{color:'#fff'}}>B.Sc. IT</strong> at Swami Sahajanand College of Computer Science (2024–27).</p>
+          <div className="quote-wrap"><span className="q-line"></span><em className="q-text">"Know your enemy better than they know themselves."</em></div>
+          <div className="info-tbl mt-4">
+            {[['College','SSCC, Bhavnagar'],['Degree','B.Sc. IT (2024–27)'],['Focus','Web Pentesting / VAPT'],['Status','● Available']].map(([k,v],i)=>(
+              <div key={i} className="info-row"><span className="ik">{k}</span><span className="iv" style={{color:k==='Status'?'var(--neon)':undefined}}>{v}</span></div>
+            ))}
+          </div>
+        </AboutRow>
 
-        <div class="clink-list">
-          <a href="mailto:baraiyakrunal728@gmail.com" class="clink-item">
-            <div class="cli-icon cyan">✉</div>
-            <div class="cli-text">
-              <div class="cli-label">Email</div>
-              <div class="cli-val">baraiyakrunal728@gmail.com</div>
+        {/* ROW 2 */}
+        <AboutRow img="public/images/photo2.jpg" side="right" label="// MISSION" labelColor="var(--purple)" title="Security" titleAccent="Mindset" titleAccentColor="var(--purple)" frameColor="var(--purple)">
+          <p className="text-sm mb-3" style={{color:'var(--text2)',lineHeight:1.75}}>I actively participate in <strong style={{color:'#fff'}}>CTF competitions</strong> and train on <span style={{color:'var(--cyber)'}}>TryHackMe</span> and <span style={{color:'var(--purple)'}}>HackTheBox</span> daily to sharpen offensive and defensive skills.</p>
+          <p className="text-sm mb-4" style={{color:'var(--text2)',lineHeight:1.75}}>My goal: become a certified security professional — contributing to a <strong style={{color:'#fff'}}>safer digital ecosystem</strong> through responsible disclosure.</p>
+          <div className="mini-term">
+            <div className="mt-bar"><span className="mtd" style={{background:'#ff5f57'}}></span><span className="mtd" style={{background:'#ffbd2e'}}></span><span className="mtd" style={{background:'#28ca41'}}></span><span className="font-mono text-[11px] ml-2" style={{color:'var(--text3)',letterSpacing:1}}>krunal@kali — contact.sh</span></div>
+            <div className="mt-body">
+              <span className="p">└─$ </span><span className="c">cat contact.txt</span><br/>
+              <span className="o">📧 baraiyakrunal728@gmail.com</span><br/>
+              <span className="o">📱 +91 72020 30488</span><br/>
+              <span className="o">📍 Bhavnagar, Gujarat, India</span><br/>
+              <span className="p">└─$ </span><span className="mt-cur"></span>
             </div>
-            <span class="cli-arr">→</span>
-          </a>
-          <a href="tel:+917202030488" class="clink-item">
-            <div class="cli-icon purple">📱</div>
-            <div class="cli-text">
-              <div class="cli-label">Phone</div>
-              <div class="cli-val">+91 72020 30488</div>
-            </div>
-            <span class="cli-arr">→</span>
-          </a>
-          <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" rel="noopener" class="clink-item">
-            <div class="cli-icon green">in</div>
-            <div class="cli-text">
-              <div class="cli-label">LinkedIn</div>
-              <div class="cli-val">krunal-palival-11bb16326</div>
-            </div>
-            <span class="cli-arr">→</span>
-          </a>
-          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="clink-item">
-            <div class="cli-icon orange">⌥</div>
-            <div class="cli-text">
-              <div class="cli-label">GitHub</div>
-              <div class="cli-val">mriconic295-gif</div>
-            </div>
-            <span class="cli-arr">→</span>
-          </a>
-          <a href="https://www.instagram.com/krunal_palival" target="_blank" rel="noopener" class="clink-item">
-            <div class="cli-icon purple">◈</div>
-            <div class="cli-text">
-              <div class="cli-label">Instagram</div>
-              <div class="cli-val">@krunal_palival</div>
-            </div>
-            <span class="cli-arr">→</span>
-          </a>
-        </div>
+          </div>
+        </AboutRow>
+
+        {/* ROW 3 */}
+        <AboutRow img="public/images/photo3.jpg" side="left" label="// PHILOSOPHY" labelColor="var(--neon)" title="Always" titleAccent="Learning" titleAccentColor="var(--neon)" frameColor="var(--neon)">
+          <p className="text-sm mb-4" style={{color:'var(--text2)',lineHeight:1.75}}>Cybersecurity is a <strong style={{color:'#fff'}}>continuous journey</strong>. I stay updated with latest CVEs, zero-days, and security research. Every system has a vulnerability; my job is to find it <em>before the bad guys do.</em></p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+            {[{i:'⚔️',t:'Offensive',s:'Attacker Mindset'},{i:'🛡️',t:'Defensive',s:'Secure Systems'},{i:'🔍',t:'OSINT',s:'Gather Intel'},{i:'🚩',t:'CTF',s:'Solve & Win'}].map((c,i)=>(
+              <div key={i} className={`p-3 rounded-lg text-center cursor-default transition-all duration-300 hover:-translate-y-1`} style={{background:'rgba(10,15,26,0.7)',border:'1px solid rgba(255,255,255,0.07)'}}>
+                <div style={{fontSize:20,marginBottom:6}}>{c.i}</div>
+                <div style={{fontFamily:'Rajdhani,sans-serif',fontSize:12,fontWeight:700,color:'#fff'}}>{c.t}</div>
+                <div className="font-mono" style={{fontSize:9,color:'var(--text3)',letterSpacing:0.5,marginTop:2}}>{c.s}</div>
+              </div>
+            ))}
+          </div>
+        </AboutRow>
       </div>
+    </section>
+  );
+}
 
-      <form class="contact-form" id="contactForm" data-reveal="right" novalidate>
-        <div class="cf-group">
-          <label class="cf-label">// NAME</label>
-          <input type="text" class="cf-input" placeholder="Your Name" name="name" required>
-        </div>
-        <div class="cf-group">
-          <label class="cf-label">// EMAIL</label>
-          <input type="email" class="cf-input" placeholder="your@email.com" name="email" required>
-        </div>
-        <div class="cf-group">
-          <label class="cf-label">// SUBJECT</label>
-          <input type="text" class="cf-input" placeholder="Subject" name="subject">
-        </div>
-        <div class="cf-group">
-          <label class="cf-label">// MESSAGE</label>
-          <textarea class="cf-input cf-textarea" placeholder="Your message..." name="message" required></textarea>
-        </div>
-        <button type="submit" class="btn-primary cf-submit" id="cfSubmit">
-          <span id="cfBtnText">TRANSMIT MESSAGE</span>
-          <span class="btn-icon">→</span>
-        </button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════
-     FOOTER
-═══════════════════════════════════ -->
-<footer id="footer">
-  <div class="footer-container">
-    <div class="footer-logo">
-      <span class="nl-bracket">[</span>
-      <span class="nl-text">KP</span>
-      <span class="nl-bracket">]</span>
-    </div>
-    <div class="footer-center">
-      <p class="footer-name">Krunal Palival · Ethical Hacker · Bhavnagar, Gujarat 🇮🇳</p>
-      <div class="footer-socials">
-        <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" class="fsoc">GitHub</a>
-        <span class="fsep">·</span>
-        <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" rel="noopener" class="fsoc">LinkedIn</a>
-        <span class="fsep">·</span>
-        <a href="https://www.instagram.com/krunal_palival" target="_blank" rel="noopener" class="fsoc">Instagram</a>
+/* SKILLS */
+function SkillBar({name,desc,pct,color,vis}) {
+  const barRef = useRef();
+  useEffect(()=>{ if(vis && barRef.current) setTimeout(()=>{ barRef.current.style.width=pct+'%'; },100); },[vis,pct]);
+  const colors = {c:'var(--cyber)',p:'var(--purple)',g:'var(--neon)',o:'var(--orange)'};
+  const col = colors[color]||colors.c;
+  return (
+    <div style={{marginBottom:12}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:3}}>
+        <span style={{fontFamily:'Rajdhani,sans-serif',fontSize:13,fontWeight:600,color:'#fff',letterSpacing:0.5}}>{name}</span>
+        <span className="font-mono" style={{fontSize:10,color:col}}>{pct}%</span>
+      </div>
+      <p className="font-mono" style={{fontSize:10,color:'var(--text3)',marginBottom:5,letterSpacing:0.5}}>{desc}</p>
+      <div style={{height:3,background:'rgba(255,255,255,0.05)',borderRadius:2,overflow:'hidden'}}>
+        <div ref={barRef} className="bar-fill" style={{height:'100%',background:`linear-gradient(90deg,${col}55,${col})`,borderRadius:2,boxShadow:`0 0 8px ${col}88`}}></div>
       </div>
     </div>
-    <div class="footer-copy">
-      <span class="accent">©</span> 2025 Krunal Palival
-      <br><span class="footer-hack">Hack the Planet <span class="accent">☠</span></span>
-    </div>
-  </div>
-</footer>
+  );
+}
 
-<script src="assets/js/script.js"></script>
+function Skills() {
+  const [ref,vis] = useReveal(0.1);
+  return (
+    <section id="skills" style={{padding:'80px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+      <div ref={ref} style={{maxWidth:1100,margin:'0 auto',padding:'0 32px'}}>
+        <div className={`sr ${vis?'in':''}`} style={{marginBottom:44}}>
+          <div className="font-mono text-[11px] tracking-widest mb-3" style={{color:'var(--cyber)'}}>// SKILL_MATRIX.SH</div>
+          <h2 style={{fontFamily:'Orbitron,sans-serif',fontSize:'clamp(24px,4vw,38px)',fontWeight:700,color:'#fff',letterSpacing:3}}>Technical <span style={{color:'var(--cyber)'}}>Arsenal</span></h2>
+          <div style={{width:50,height:2,background:'linear-gradient(90deg,var(--cyber),transparent)',marginTop:12}}></div>
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(255px,1fr))',gap:18,marginBottom:44}}>
+          {SKILLS.map((sk,i)=>(
+            <div key={i} className={`skill-box shine ${COL[sk.color].sc} sr ${vis?'in':''}`} style={{transitionDelay:`${i*0.08}s`}}>
+              <div className={`skill-head ${COL[sk.color].hc}`}>
+                <span style={{fontSize:15}}>{sk.icon}</span>
+                <span>{sk.label}</span>
+              </div>
+              <div style={{padding:'14px 16px'}}>
+                {sk.items.map((it,j)=><SkillBar key={j} name={it.n} desc={it.d} pct={it.p} color={sk.color} vis={vis}/>)}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tags */}
+        <div className={`sr ${vis?'in':''}`} style={{transitionDelay:'0.3s'}}>
+          <div className="font-mono text-[11px] tracking-widest mb-4" style={{color:'var(--cyber)'}}>// EXPERTISE_TAGS</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:9}}>
+            {TAGS.map((t,i)=><span key={i} className={`etag ${t.c}`}>{t.t}</span>)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* PROJECTS */
+function Projects() {
+  const [ref,vis] = useReveal(0.1);
+  return (
+    <section id="projects" style={{padding:'80px 0',borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+      <div ref={ref} style={{maxWidth:1100,margin:'0 auto',padding:'0 32px'}}>
+        <div className={`sr ${vis?'in':''}`} style={{marginBottom:44}}>
+          <div className="font-mono text-[11px] tracking-widest mb-3" style={{color:'var(--cyber)'}}>// PROJECTS.SH</div>
+          <h2 style={{fontFamily:'Orbitron,sans-serif',fontSize:'clamp(24px,4vw,38px)',fontWeight:700,color:'#fff',letterSpacing:3}}>Security <span style={{color:'var(--cyber)'}}>Projects</span></h2>
+          <div style={{width:50,height:2,background:'linear-gradient(90deg,var(--cyber),transparent)',marginTop:12}}></div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(285px,1fr))',gap:18}}>
+          {PROJECTS.map((p,i)=>{
+            const col = COL[p.color];
+            const colors = {c:'var(--cyber)',p:'var(--purple)',g:'var(--neon)',o:'var(--orange)'};
+            const c = colors[p.color];
+            return (
+              <div key={i} className={`proj-box shine ${col.pc} sr ${vis?'in':''}`} style={{transitionDelay:`${i*0.1}s`,position:'relative'}}>
+                {p.featured && <span style={{position:'absolute',top:14,right:14,fontFamily:'Share Tech Mono,monospace',fontSize:9,letterSpacing:2,padding:'3px 9px',background:`rgba(0,243,255,0.08)`,border:'1px solid rgba(0,243,255,0.3)',color:'var(--cyber)',borderRadius:2}}>★ FEATURED</span>}
+                <div className="font-mono" style={{fontSize:11,letterSpacing:2,color:c}}>{p.num}</div>
+                <h3 style={{fontFamily:'Rajdhani,sans-serif',fontSize:20,fontWeight:700,color:'#fff',letterSpacing:1}}>{p.title}</h3>
+                <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                  {p.tags.map((t,j)=><span key={j} className={`etag t${p.color}`} style={{fontSize:10,padding:'2px 8px'}}>{t}</span>)}
+                </div>
+                <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.65,flex:1}}>{p.desc}</p>
+                <a href={p.link} target="_blank" rel="noopener" className="font-mono text-sm flex items-center gap-2" style={{color:c,transition:'all 0.2s'}} onMouseEnter={e=>e.target.style.textShadow=`0 0 8px ${c}`} onMouseLeave={e=>e.target.style.textShadow='none'}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  View on GitHub →
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* CONTACT */
+function Contact() {
+  const [ref,vis] = useReveal(0.1);
+  const [sent,setSent] = useState(false);
+  const [loading,setLoading] = useState(false);
+  const submit = e => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(()=>{ setLoading(false); setSent(true); setTimeout(()=>setSent(false),3500); e.target.reset(); },1200);
+  };
+  const contacts = [
+    {icon:'✉',col:'c',label:'Email',val:'baraiyakrunal728@gmail.com',href:'mailto:baraiyakrunal728@gmail.com'},
+    {icon:'📱',col:'p',label:'Phone',val:'+91 72020 30488',href:'tel:+917202030488'},
+    {icon:'in',col:'g',label:'LinkedIn',val:'krunal-palival-11bb16326',href:'https://www.linkedin.com/in/krunal-palival-11bb16326'},
+    {icon:'GH',col:'o',label:'GitHub',val:'mriconic295-gif',href:'https://github.com/mriconic295-gif'},
+    {icon:'IG',col:'p',label:'Instagram',val:'@krunal_palival',href:'https://www.instagram.com/krunal_palival'},
+  ];
+  const iconColors = {c:'var(--cyber)',p:'var(--purple)',g:'var(--neon)',o:'var(--orange)'};
+  return (
+    <section id="contact" style={{padding:'80px 0'}}>
+      <div ref={ref} style={{maxWidth:1100,margin:'0 auto',padding:'0 32px'}}>
+        <div className={`sr ${vis?'in':''}`} style={{marginBottom:44}}>
+          <div className="font-mono text-[11px] tracking-widest mb-3" style={{color:'var(--cyber)'}}>// CONTACT.SH</div>
+          <h2 style={{fontFamily:'Orbitron,sans-serif',fontSize:'clamp(24px,4vw,38px)',fontWeight:700,color:'#fff',letterSpacing:3}}>Get In <span style={{color:'var(--cyber)'}}>Touch</span></h2>
+          <div style={{width:50,height:2,background:'linear-gradient(90deg,var(--cyber),transparent)',marginTop:12}}></div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:52,alignItems:'start'}}>
+          <div className={`sr-l ${vis?'in':''}`}>
+            <p className="text-sm mb-5" style={{color:'var(--text2)',lineHeight:1.75}}>Open to cybersecurity opportunities, research collaborations, CTF teams, or just talking infosec. I respond fast — reach out through any channel.</p>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {contacts.map((c,i)=>(
+                <a key={i} href={c.href} target={c.href.startsWith('http')?'_blank':undefined} rel="noopener" className="c-item">
+                  <div className="c-icon" style={{background:`${iconColors[c.col]}15`,border:`1px solid ${iconColors[c.col]}30`,color:iconColors[c.col],fontFamily:'Share Tech Mono,monospace',fontWeight:700,fontSize:c.icon.length===2?12:16}}>{c.icon}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div className="font-mono" style={{fontSize:10,color:'var(--text3)',letterSpacing:2,marginBottom:2}}>{c.label}</div>
+                    <div className="font-mono" style={{fontSize:12,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.val}</div>
+                  </div>
+                  <span style={{color:'var(--text3)',transition:'all 0.3s'}}>→</span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className={`sr-r ${vis?'in':''}`}>
+            <form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:16}}>
+              {[{l:'// NAME',p:'Your Name',t:'text',n:'name'},{l:'// EMAIL',p:'your@email.com',t:'email',n:'email'},{l:'// SUBJECT',p:'Subject',t:'text',n:'subject'}].map((f,i)=>(
+                <div key={i}>
+                  <label className="font-mono" style={{fontSize:11,color:'var(--cyber)',letterSpacing:3,display:'block',marginBottom:7}}>{f.l}</label>
+                  <input type={f.t} name={f.n} placeholder={f.p} required={f.n!=='subject'} style={{width:'100%',background:'rgba(8,14,26,0.9)',border:'1px solid rgba(0,243,255,0.12)',color:'var(--text)',fontFamily:'Share Tech Mono,monospace',fontSize:13,padding:'11px 15px',borderRadius:4,outline:'none',transition:'all 0.3s'}} onFocus={e=>{e.target.style.borderColor='rgba(0,243,255,0.5)';e.target.style.boxShadow='0 0 0 3px rgba(0,243,255,0.07)';}} onBlur={e=>{e.target.style.borderColor='rgba(0,243,255,0.12)';e.target.style.boxShadow='none';}}/>
+                </div>
+              ))}
+              <div>
+                <label className="font-mono" style={{fontSize:11,color:'var(--cyber)',letterSpacing:3,display:'block',marginBottom:7}}>// MESSAGE</label>
+                <textarea name="message" placeholder="Your message..." required rows={4} style={{width:'100%',background:'rgba(8,14,26,0.9)',border:'1px solid rgba(0,243,255,0.12)',color:'var(--text)',fontFamily:'Share Tech Mono,monospace',fontSize:13,padding:'11px 15px',borderRadius:4,outline:'none',resize:'vertical',transition:'all 0.3s'}} onFocus={e=>{e.target.style.borderColor='rgba(0,243,255,0.5)';e.target.style.boxShadow='0 0 0 3px rgba(0,243,255,0.07)';}} onBlur={e=>{e.target.style.borderColor='rgba(0,243,255,0.12)';e.target.style.boxShadow='none';}}/>
+              </div>
+              <button type="submit" className="btn-c" style={{justifyContent:'center',opacity:loading?0.7:1}} disabled={loading}>
+                {sent ? '✓ MESSAGE SENT!' : loading ? 'TRANSMITTING...' : <>TRANSMIT MESSAGE <span>→</span></>}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* FOOTER */
+function Footer() {
+  return (
+    <footer style={{borderTop:'1px solid rgba(255,255,255,0.05)',padding:'24px 32px',position:'relative',zIndex:1}}>
+      <div style={{maxWidth:1100,margin:'0 auto',display:'flex',flexWrap:'wrap',alignItems:'center',gap:16,justifyContent:'space-between'}}>
+        <div style={{fontFamily:'Orbitron,sans-serif',fontSize:14,color:'var(--cyber)',fontWeight:900,letterSpacing:4,textShadow:'0 0 12px rgba(0,243,255,0.4)'}}>
+          <span style={{color:'#3a5070'}}>[</span>KP<span style={{color:'#3a5070'}}>]</span>
+        </div>
+        <p className="font-mono" style={{fontSize:11,color:'var(--text3)',letterSpacing:1}}>Krunal Palival · Ethical Hacker · Bhavnagar, Gujarat 🇮🇳</p>
+        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <a href="https://github.com/mriconic295-gif" target="_blank" rel="noopener" className="soc-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/krunal-palival-11bb16326" target="_blank" rel="noopener" className="soc-icon li"><span style={{fontSize:12,fontWeight:800,fontFamily:'sans-serif'}}>in</span></a>
+          <a href="https://www.instagram.com/krunal_palival" target="_blank" rel="noopener" className="soc-icon ig">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+        </div>
+        <p className="font-mono" style={{fontSize:11,color:'var(--text3)',width:'100%',textAlign:'center'}}>
+          <span style={{color:'var(--cyber)'}}>©</span> 2025 Krunal Palival · Hack the Planet <span style={{color:'var(--cyber)'}}>☠</span> · Built with <span style={{color:'var(--red)'}}>❤</span>
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+/* APP */
+function App() {
+  useEffect(()=>{
+    initParticles();
+    initCursor();
+  },[]);
+  return (
+    <>
+      <Navbar/>
+      <Hero/>
+      <About/>
+      <Skills/>
+      <Projects/>
+      <Contact/>
+      <Footer/>
+    </>
+  );
+}
+
+/* BOOT + MOUNT */
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.body.style.overflow = 'hidden';
+  runBoot(()=>{
+    document.body.style.overflow = '';
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App/>);
+  });
+});
+</script>
 </body>
 </html>
