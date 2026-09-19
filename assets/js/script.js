@@ -1,99 +1,86 @@
-/* ═══════════════════════════════════════════
-   KRUNAL PALIVAL — Portfolio JavaScript
-   Features:
-   • Particle Network Background (same as uploaded theme)
-   • Typewriter Effect
-   • Scroll Reveal Animations
-   • Skill Bar Animations
-   • Navbar Scroll Effect
-   • Mobile Menu
-   • Smooth Anchor Scroll
-   • Active Nav Link Highlight
-   • Contact Form Feedback
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   KRUNAL PALIVAL — Premium Portfolio JS
+   GSAP + Custom Cursor + Particle Network
+   Mobile: reduced speed particles
+═══════════════════════════════════════ */
 
-/* ──────────────────────────────────────────
-   1. PARTICLE NETWORK BACKGROUND
-   (Exact same logic as uploaded theme)
-────────────────────────────────────────── */
-const canvas = document.getElementById('network-canvas');
-const ctx = canvas.getContext('2d');
-let width, height;
-let particles = [];
+// ── Device detection ──
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-function resize() {
-  width  = canvas.width  = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
+// ── GSAP Register ──
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-class Particle {
+/* ═══════════════════════════════════════
+   1. PARTICLE NETWORK — PC speed on PC,
+      slower + fewer on mobile
+═══════════════════════════════════════ */
+const canvas = document.getElementById('bg-canvas');
+const ctx    = canvas.getContext('2d');
+let W, H;
+
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
+
+const COUNT    = isMobile ? 40 : 90;
+const SPEED    = isMobile ? 0.4 : 1.2;   // mobile much slower
+const DIST     = isMobile ? 120 : 180;
+
+class Dot {
   constructor() { this.reset(); }
   reset() {
-    this.x      = Math.random() * width;
-    this.y      = Math.random() * height;
-    this.vx     = (Math.random() - 0.5) * 1.5;
-    this.vy     = (Math.random() - 0.5) * 1.5;
-    this.radius = Math.random() * 2 + 1;
-    this.alpha  = Math.random() * 0.5 + 0.3;
+    this.x  = Math.random() * W;
+    this.y  = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * SPEED;
+    this.vy = (Math.random() - 0.5) * SPEED;
+    this.r  = Math.random() * 1.8 + 0.8;
+    this.a  = Math.random() * 0.5 + 0.25;
   }
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x < 0 || this.x > width)  this.vx *= -1;
-    if (this.y < 0 || this.y > height) this.vy *= -1;
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
   }
   draw() {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 243, 255, ${this.alpha})`;
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,243,255,${this.a})`;
     ctx.fill();
   }
 }
 
-// Spawn 90 particles (same count as uploaded theme)
-for (let i = 0; i < 90; i++) particles.push(new Particle());
+const dots = Array.from({ length: COUNT }, () => new Dot());
 
-// Mouse interaction — particles gently attract to cursor
+// Mouse attraction — desktop only
 let mouse = { x: null, y: null };
-window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+if (!isMobile) {
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+}
 
 function animate() {
-  ctx.clearRect(0, 0, width, height);
-
-  // Update + Draw particles
-  particles.forEach(p => {
-    // Subtle mouse attraction
-    if (mouse.x !== null) {
-      const dx = mouse.x - p.x;
-      const dy = mouse.y - p.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 200) {
-        p.vx += dx * 0.00015;
-        p.vy += dy * 0.00015;
-        // Cap velocity
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > 2.5) { p.vx = (p.vx / speed) * 2.5; p.vy = (p.vy / speed) * 2.5; }
+  ctx.clearRect(0, 0, W, H);
+  dots.forEach(d => {
+    if (!isMobile && mouse.x !== null) {
+      const dx = mouse.x - d.x, dy = mouse.y - d.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 180) {
+        d.vx += dx * 0.00012; d.vy += dy * 0.00012;
+        const spd = Math.hypot(d.vx, d.vy);
+        if (spd > 2) { d.vx = d.vx / spd * 2; d.vy = d.vy / spd * 2; }
       }
     }
-    p.update();
-    p.draw();
+    d.update(); d.draw();
   });
-
-  // Draw connecting lines (same as uploaded theme — 180px threshold)
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx   = particles[i].x - particles[j].x;
-      const dy   = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 180) {
+  for (let i = 0; i < dots.length; i++) {
+    for (let j = i + 1; j < dots.length; j++) {
+      const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < DIST) {
         ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(0, 243, 255, ${(1 - dist / 180) * 0.6})`;
-        ctx.lineWidth = 0.6;
+        ctx.moveTo(dots[i].x, dots[i].y);
+        ctx.lineTo(dots[j].x, dots[j].y);
+        ctx.strokeStyle = `rgba(0,243,255,${(1 - dist / DIST) * 0.55})`;
+        ctx.lineWidth = 0.5;
         ctx.stroke();
       }
     }
@@ -102,230 +89,197 @@ function animate() {
 }
 animate();
 
+/* ═══════════════════════════════════════
+   2. CUSTOM CURSOR — desktop only
+═══════════════════════════════════════ */
+if (!isMobile) {
+  const dot  = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  let rx = 0, ry = 0;
 
-/* ──────────────────────────────────────────
-   2. TYPEWRITER EFFECT
-────────────────────────────────────────── */
-const roles = [
-  'Cybersecurity Enthusiast',
-  'Ethical Hacker',
-  'Penetration Tester',
-  'Security Researcher',
-  'CTF Player',
-  'Bug Hunter'
-];
-const typewriterEl = document.getElementById('typewriter');
-let roleIndex   = 0;
-let charIndex   = 0;
-let isDeleting  = false;
-let typeTimeout = null;
+  window.addEventListener('mousemove', e => {
+    dot.style.left  = e.clientX + 'px';
+    dot.style.top   = e.clientY + 'px';
+    gsap.to(ring, { left: e.clientX, top: e.clientY, duration: 0.15, ease: 'power2.out' });
+  });
+
+  document.querySelectorAll('a, button, .badge, .tag, .proj-card, .tool-cat, .photo-frame').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width  = '50px'; ring.style.height = '50px';
+      ring.style.borderColor = 'rgba(0,243,255,0.8)';
+      ring.style.background  = 'rgba(0,243,255,0.05)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width  = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(0,243,255,0.5)';
+      ring.style.background  = 'transparent';
+    });
+  });
+}
+
+/* ═══════════════════════════════════════
+   3. GSAP HERO ANIMATIONS
+═══════════════════════════════════════ */
+gsap.timeline({ defaults: { ease: 'power3.out' } })
+  .from('#hero-tag',  { y: 20, opacity: 0, duration: 0.6 })
+  .from('#n1',        { x: -60, opacity: 0, duration: 0.8 }, '-=0.2')
+  .from('#n2',        { x: -60, opacity: 0, duration: 0.8 }, '-=0.5')
+  .from('.hero-role', { y: 20, opacity: 0, duration: 0.6 }, '-=0.3')
+  .from('.hero-loc',  { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
+  .from('.hero-badges .badge', { y: 20, opacity: 0, stagger: 0.1, duration: 0.5 }, '-=0.3')
+  .from('.hero-btns a', { y: 20, opacity: 0, stagger: 0.15, duration: 0.5 }, '-=0.3')
+  .from('.hero-right', { x: 60, opacity: 0, duration: 1 }, '-=1.2');
+
+/* ═══════════════════════════════════════
+   4. TYPEWRITER
+═══════════════════════════════════════ */
+const roles = ['Cybersecurity Enthusiast','Ethical Hacker','Penetration Tester','Security Researcher','CTF Player','Bug Hunter','VAPT Specialist'];
+const tw = document.getElementById('typewriter');
+let ri = 0, ci = 0, del = false;
 
 function type() {
-  const currentRole = roles[roleIndex];
-  if (isDeleting) {
-    typewriterEl.textContent = currentRole.substring(0, charIndex - 1);
-    charIndex--;
-  } else {
-    typewriterEl.textContent = currentRole.substring(0, charIndex + 1);
-    charIndex++;
-  }
-
-  let speed = isDeleting ? 60 : 100;
-
-  if (!isDeleting && charIndex === currentRole.length) {
-    speed = 2000; // Pause at end
-    isDeleting = true;
-  } else if (isDeleting && charIndex === 0) {
-    isDeleting = false;
-    roleIndex  = (roleIndex + 1) % roles.length;
-    speed = 400;
-  }
-  typeTimeout = setTimeout(type, speed);
+  const cur = roles[ri];
+  tw.textContent = del ? cur.substring(0, ci - 1) : cur.substring(0, ci + 1);
+  del ? ci-- : ci++;
+  let spd = del ? 55 : 90;
+  if (!del && ci === cur.length) { spd = 2200; del = true; }
+  else if (del && ci === 0) { del = false; ri = (ri + 1) % roles.length; spd = 400; }
+  setTimeout(type, spd);
 }
 type();
 
-
-/* ──────────────────────────────────────────
-   3. SCROLL REVEAL
-────────────────────────────────────────── */
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+/* ═══════════════════════════════════════
+   5. SCROLL ANIMATIONS — GSAP ScrollTrigger
+═══════════════════════════════════════ */
+// Section headings
+gsap.utils.toArray('.sec-label, .sec-title').forEach(el => {
+  gsap.from(el, {
+    scrollTrigger: { trigger: el, start: 'top 88%' },
+    y: 30, opacity: 0, duration: 0.7, ease: 'power3.out'
   });
-}, { threshold: 0.1 });
+});
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+// About rows
+gsap.utils.toArray('.about-row').forEach((row, i) => {
+  const photo   = row.querySelector('.about-photo-wrap');
+  const content = row.querySelector('.about-content');
+  const isRev   = row.classList.contains('reverse');
+  if (photo) gsap.from(photo,   { scrollTrigger: { trigger: row, start: 'top 80%' }, x: isRev ? 60 : -60, opacity: 0, duration: 0.9, ease: 'power3.out' });
+  if (content) gsap.from(content, { scrollTrigger: { trigger: row, start: 'top 80%' }, x: isRev ? -60 : 60, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.15 });
+});
 
+// Tool cards stagger
+gsap.from('.tool-cat', {
+  scrollTrigger: { trigger: '.tools-grid', start: 'top 80%' },
+  y: 40, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out'
+});
 
-/* ──────────────────────────────────────────
-   4. SKILL BARS — Animate on scroll
-────────────────────────────────────────── */
-const barObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
-        const targetWidth = bar.getAttribute('data-width');
-        bar.style.width   = targetWidth + '%';
+// Project cards
+gsap.from('.proj-card', {
+  scrollTrigger: { trigger: '.projects-grid', start: 'top 80%' },
+  y: 40, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out'
+});
+
+// Tags
+gsap.from('.tag', {
+  scrollTrigger: { trigger: '.tags-cloud', start: 'top 85%' },
+  scale: 0.8, opacity: 0, stagger: 0.04, duration: 0.4, ease: 'back.out(1.7)'
+});
+
+// Contact links
+gsap.from('.clink', {
+  scrollTrigger: { trigger: '.clinks', start: 'top 80%' },
+  x: -30, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out'
+});
+
+/* ═══════════════════════════════════════
+   6. SKILL BARS — animate on scroll
+═══════════════════════════════════════ */
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.tool-bar').forEach(bar => {
+        bar.style.width = bar.getAttribute('data-w') + '%';
       });
-      barObserver.unobserve(entry.target);
+      barObs.unobserve(e.target);
     }
   });
 }, { threshold: 0.3 });
+document.querySelectorAll('.tool-cat').forEach(el => barObs.observe(el));
 
-const skillSection = document.getElementById('skills');
-if (skillSection) barObserver.observe(skillSection);
-
-
-/* ──────────────────────────────────────────
-   5. NAVBAR — Scroll shadow + Active link
-────────────────────────────────────────── */
-const navbar  = document.getElementById('navbar');
+/* ═══════════════════════════════════════
+   7. NAVBAR
+═══════════════════════════════════════ */
+const navbar   = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-links a');
 const sections = document.querySelectorAll('section[id]');
 
 window.addEventListener('scroll', () => {
-  // Add scrolled class
-  if (window.scrollY > 50) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-
-  // Active nav link highlight
-  let current = '';
-  sections.forEach(section => {
-    if (window.scrollY >= section.offsetTop - 120) {
-      current = section.getAttribute('id');
-    }
-  });
-  navLinks.forEach(link => {
-    link.style.color = '';
-    link.style.textShadow = '';
-    if (link.getAttribute('href') === '#' + current) {
-      link.style.color      = 'var(--accent)';
-      link.style.textShadow = '0 0 8px rgba(0,243,255,0.5)';
-    }
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+  navLinks.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + cur);
   });
 });
 
-
-/* ──────────────────────────────────────────
-   6. MOBILE MENU
-────────────────────────────────────────── */
-const hamburger  = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobile-menu');
-
-hamburger.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
+/* ═══════════════════════════════════════
+   8. MOBILE MENU
+═══════════════════════════════════════ */
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('mob-menu').classList.toggle('open');
+});
+document.querySelectorAll('.mob-menu a').forEach(l => {
+  l.addEventListener('click', () => document.getElementById('mob-menu').classList.remove('open'));
 });
 
-// Close on link click
-document.querySelectorAll('.mobile-link').forEach(link => {
-  link.addEventListener('click', () => {
-    mobileMenu.classList.remove('open');
+/* ═══════════════════════════════════════
+   9. SMOOTH SCROLL
+═══════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); window.scrollTo({ top: t.offsetTop - 64, behavior: 'smooth' }); }
   });
 });
 
-
-/* ──────────────────────────────────────────
-   7. CONTACT FORM FEEDBACK
-────────────────────────────────────────── */
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-  contactForm.addEventListener('submit', function(e) {
+/* ═══════════════════════════════════════
+   10. CONTACT FORM
+═══════════════════════════════════════ */
+const form = document.getElementById('cform');
+if (form) {
+  form.addEventListener('submit', e => {
     e.preventDefault();
-    const btn = this.querySelector('.form-submit');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span>MESSAGE SENT ✓</span>';
-    btn.style.background    = 'rgba(0,255,157,0.1)';
-    btn.style.borderColor   = 'var(--accent3)';
-    btn.style.color         = 'var(--accent3)';
+    const btn = form.querySelector('.fsub');
+    const orig = btn.innerHTML;
+    btn.innerHTML = 'MESSAGE SENT ✓';
+    btn.style.cssText += ';background:rgba(0,255,157,0.1);border-color:var(--g);color:var(--g);';
     btn.disabled = true;
     setTimeout(() => {
-      btn.innerHTML  = originalText;
-      btn.style.background  = '';
-      btn.style.borderColor = '';
-      btn.style.color       = '';
+      btn.innerHTML = orig;
+      btn.style.cssText = '';
       btn.disabled = false;
-      contactForm.reset();
+      form.reset();
     }, 3000);
   });
 }
 
-
-/* ──────────────────────────────────────────
-   8. SMOOTH SCROLL for anchor links
-────────────────────────────────────────── */
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      e.preventDefault();
-      window.scrollTo({ top: target.offsetTop - 64, behavior: 'smooth' });
-    }
-  });
-});
-
-
-/* ──────────────────────────────────────────
-   9. PROJECT CARDS — subtle parallax tilt
-────────────────────────────────────────── */
-document.querySelectorAll('.project-card').forEach(card => {
-  card.addEventListener('mousemove', function(e) {
-    const rect = this.getBoundingClientRect();
-    const x    = ((e.clientX - rect.left) / rect.width  - 0.5) * 8;
-    const y    = ((e.clientY - rect.top)  / rect.height - 0.5) * 8;
-    this.style.transform = `perspective(600px) rotateX(${-y}deg) rotateY(${x}deg) translateY(-4px)`;
-  });
-  card.addEventListener('mouseleave', function() {
-    this.style.transform = '';
-  });
-});
-
-
-/* ──────────────────────────────────────────
-   10. GLITCH EFFECT on hero name (hover)
-────────────────────────────────────────── */
-const heroName = document.querySelector('.hero-name');
-if (heroName) {
-  heroName.addEventListener('mouseenter', function() {
-    this.style.animation = 'glitch 0.3s infinite';
-  });
-  heroName.addEventListener('mouseleave', function() {
-    this.style.animation = '';
+/* ═══════════════════════════════════════
+   11. PROJECT CARD TILT — desktop only
+═══════════════════════════════════════ */
+if (!isMobile) {
+  document.querySelectorAll('.proj-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - 0.5) * 10;
+      const y = ((e.clientY - r.top)  / r.height - 0.5) * 10;
+      card.style.transform = `perspective(700px) rotateX(${-y}deg) rotateY(${x}deg) translateY(-8px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
   });
 }
 
-// Glitch keyframes injected via JS
-const glitchStyle = document.createElement('style');
-glitchStyle.textContent = `
-@keyframes glitch {
-  0%   { text-shadow: 0 0 30px rgba(0,243,255,0.15); }
-  20%  { text-shadow: -3px 0 var(--accent5), 3px 0 var(--accent2); }
-  40%  { text-shadow: 3px 0 var(--accent), -3px 0 var(--accent3); clip-path: inset(10% 0 85% 0); }
-  60%  { text-shadow: -3px 0 var(--accent2), 3px 0 var(--accent5); }
-  80%  { text-shadow: 3px 0 var(--accent3), -3px 0 var(--accent); clip-path: inset(80% 0 5% 0); }
-  100% { text-shadow: 0 0 30px rgba(0,243,255,0.15); clip-path: none; }
-}
-`;
-document.head.appendChild(glitchStyle);
-
-
-/* ──────────────────────────────────────────
-   CONSOLE EASTER EGG
-────────────────────────────────────────── */
-console.log('%c', 'font-size:1px');
-console.log(
-  '%c KRUNAL PALIVAL — CYBERSECURITY PORTFOLIO ',
-  'background: #03060a; color: #00f3ff; font-family: monospace; font-size: 14px; padding: 8px 20px; border: 1px solid #00f3ff;'
-);
-console.log(
-  '%c [ Ethical Hacker | Security Researcher | Bhavnagar, Gujarat ] ',
-  'background: #03060a; color: #bc13fe; font-family: monospace; font-size: 11px; padding: 4px 20px;'
-);
-console.log(
-  '%c 👋 Hello, Fellow Hacker! Curiosity is the best tool. Stay ethical.',
-  'color: #00ff9d; font-family: monospace; font-size: 12px; padding: 4px 0;'
-);
+/* ── Console Easter Egg ── */
+console.log('%c[KP] KRUNAL PALIVAL — CYBERSECURITY PORTFOLIO', 'background:#020508;color:#00f3ff;font-family:monospace;font-size:14px;padding:8px 20px;border:1px solid #00f3ff;letter-spacing:2px;');
+console.log('%c Ethical Hacker | VAPT | Security Researcher | Bhavnagar, India ', 'background:#020508;color:#bc13fe;font-family:monospace;font-size:11px;padding:4px 20px;');
+console.log('%c👋 Stay ethical. Happy hacking!', 'color:#00ff9d;font-family:monospace;font-size:12px;');
